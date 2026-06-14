@@ -2,8 +2,10 @@
  * @summary App shell with navigation and logout.
  * @author Wesley, Darlington, Mikotaj (shared)
  */
-import { Link, Navigate, Outlet } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import AmbientField from './AmbientField'
+import AnimatedOutlet from './AnimatedOutlet'
 
 export default function Layout() {
   const { auth, logout } = useAuth()
@@ -11,9 +13,11 @@ export default function Layout() {
   return (
     <div className="app-shell">
       <div className="ambient-bg" aria-hidden="true" />
+      <div className="ambient-noise" aria-hidden="true" />
       <div className="ambient-orb ambient-orb-1" aria-hidden="true" />
       <div className="ambient-orb ambient-orb-2" aria-hidden="true" />
       <div className="ambient-orb ambient-orb-3" aria-hidden="true" />
+      <AmbientField />
 
       <nav className="navbar navbar-expand-lg site-nav">
         <div className="container-fluid px-3">
@@ -72,7 +76,7 @@ export default function Layout() {
       </nav>
 
       <main className="page-shell">
-        <Outlet />
+        <AnimatedOutlet />
       </main>
 
       <footer className="site-footer">

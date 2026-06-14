@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/client'
-import GlassCard from '../../components/GlassCard'
+import AccountCard from '../../components/AccountCard'
 import PageHeader from '../../components/PageHeader'
 
 export default function DashboardPage() {
@@ -20,6 +20,8 @@ export default function DashboardPage() {
 
   if (error) return <div className="alert alert-danger">{error}</div>
   if (!dashboard) return <div className="loading-shimmer py-5 text-center">Loading your dashboard...</div>
+
+  const holderName = `${dashboard.firstName} ${dashboard.lastName}`
 
   return (
     <div className="vstack gap-4">
@@ -36,7 +38,7 @@ export default function DashboardPage() {
               €{Number(dashboard.combinedBalance).toFixed(2)}
             </div>
             <div className="mt-2 text-white-50">
-              {dashboard.firstName} {dashboard.lastName} · {dashboard.email}
+              {holderName} · {dashboard.email}
             </div>
           </div>
           <div className="text-end text-white-50 small">
@@ -45,29 +47,19 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="row g-4">
-        {dashboard.accounts.map((account) => (
-          <div className="col-md-6" key={account.id}>
-            <GlassCard
-              className="account-card h-100"
-              style={{
-                '--accent-color': account.type === 'CHECKING' ? '#22d3ee' : '#fbbf24',
-              }}
-            >
-              <span className={`account-type-badge account-type-${account.type.toLowerCase()}`}>
-                {account.type}
-              </span>
-              <p className="mt-3 mb-2">
-                <span className="text-muted small d-block">IBAN</span>
-                <span className="font-monospace">{account.iban}</span>
-              </p>
-              <p className="mb-0 display-title" style={{ fontSize: '1.75rem', color: account.type === 'CHECKING' ? '#67e8f9' : '#fde68a' }}>
-                €{Number(account.balance).toFixed(2)}
-              </p>
-            </GlassCard>
-          </div>
-        ))}
-      </div>
+      <section>
+        <h2 className="section-title">Your accounts</h2>
+        <div className="account-cards-grid">
+          {dashboard.accounts.map((account, index) => (
+            <AccountCard
+              key={account.id}
+              account={account}
+              holderName={holderName}
+              index={index}
+            />
+          ))}
+        </div>
+      </section>
 
       <div className="d-flex flex-wrap gap-2">
         <Link className="btn btn-outline-primary btn-sm" to="/internal-transfers">Internal transfer</Link>
