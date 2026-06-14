@@ -871,20 +871,148 @@ body {
 }
 
 /* ── Dashboard ── */
+.dashboard-ecosystem {
+  position: relative;
+  isolation: isolate;
+}
+
+.dashboard-aurora {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.28;
+}
+
+.dashboard-aurora-a {
+  width: min(340px, 70vw);
+  height: min(340px, 70vw);
+  top: 8%;
+  left: -8%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.55), transparent 70%);
+  animation: aurora-drift-a 20s ease-in-out infinite;
+}
+
+.dashboard-aurora-b {
+  width: min(300px, 60vw);
+  height: min(300px, 60vw);
+  top: 42%;
+  right: -10%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.45), transparent 70%);
+  animation: aurora-drift-b 24s ease-in-out infinite;
+}
+
+@keyframes aurora-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(28px, -22px) scale(1.08); }
+}
+
+@keyframes aurora-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-24px, 18px) scale(1.06); }
+}
+
+.dashboard-accounts,
+.dashboard-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.magnetic-wrap {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Rotating liquid-light border */
+.glow-border {
+  position: relative;
+  padding: 2px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.glow-border-ring {
+  position: absolute;
+  inset: -45%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(34, 211, 238, 0.85) 55deg,
+    rgba(168, 85, 247, 0.9) 130deg,
+    rgba(236, 72, 153, 0.85) 205deg,
+    rgba(251, 191, 36, 0.75) 280deg,
+    transparent 360deg
+  );
+  animation: glow-border-spin 12s linear infinite;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.glow-border-inner {
+  position: relative;
+  border-radius: calc(var(--radius-xl) - 2px);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.glow-border-hero .glow-border-ring {
+  opacity: 0.65;
+  animation-duration: 14s;
+}
+
+.glow-border-checking .glow-border-ring {
+  animation-duration: 16s;
+  opacity: 0.42;
+}
+
+.glow-border-savings .glow-border-ring {
+  animation-duration: 18s;
+  opacity: 0.4;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(251, 191, 36, 0.85) 60deg,
+    rgba(236, 72, 153, 0.8) 150deg,
+    rgba(168, 85, 247, 0.75) 240deg,
+    transparent 360deg
+  );
+}
+
+@keyframes glow-border-spin {
+  to { transform: rotate(360deg); }
+}
+
+.balance-hero-frame {
+  position: relative;
+  z-index: 1;
+}
+
 .balance-hero {
   background: var(--gradient-brand);
   background-size: 200% 200%;
-  border-radius: var(--radius-xl);
+  border-radius: calc(var(--radius-xl) - 2px);
   padding: 2rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(168, 85, 247, 0.35);
-  animation: balance-glow 10s ease infinite;
+  box-shadow: 0 12px 40px rgba(168, 85, 247, 0.28);
+  animation: balance-glow 14s ease infinite;
+}
+
+.balance-hero-glass {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  pointer-events: none;
+  z-index: 0;
 }
 
 @keyframes balance-glow {
-  0%, 100% { background-position: 0% 50%; box-shadow: 0 12px 40px rgba(168, 85, 247, 0.35); }
-  50% { background-position: 100% 50%; box-shadow: 0 16px 50px rgba(236, 72, 153, 0.35); }
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 .balance-hero::before {
@@ -892,7 +1020,8 @@ body {
   position: absolute;
   inset: 0;
   background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.5;
+  opacity: 0.45;
+  z-index: 0;
 }
 
 .balance-hero-content {
@@ -908,62 +1037,72 @@ body {
   letter-spacing: -0.02em;
 }
 
-.account-card {
-  border-top: 3px solid var(--accent-color, var(--brand-cyan));
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.account-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-soft), 0 0 30px rgba(34, 211, 238, 0.15);
-}
-
 .account-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 1.25rem;
 }
 
-.bank-card {
+.bank-card-frame {
+  border-radius: 1.25rem;
+}
+
+.bank-card-frame .glow-border-inner {
+  border-radius: calc(1.25rem - 2px);
+}
+
+.bank-card-body {
   position: relative;
   aspect-ratio: 1.586 / 1;
-  border-radius: 1.25rem;
+  border-radius: calc(1.25rem - 2px);
   padding: 1.35rem 1.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   color: #fff;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
+  transform-style: preserve-3d;
+  transition: transform 0.12s ease-out, box-shadow 0.35s ease;
   animation: bank-card-in 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  will-change: transform;
 }
 
-.bank-card:hover {
-  transform: translateY(-6px) scale(1.01);
+.bank-card-body:hover {
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.38);
 }
 
 .bank-card-checking {
   background:
-    radial-gradient(circle at 100% 0%, rgba(34, 211, 238, 0.35), transparent 45%),
-    radial-gradient(circle at 0% 100%, rgba(168, 85, 247, 0.4), transparent 50%),
-    linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #0e7490 100%);
+    radial-gradient(circle at 100% 0%, rgba(34, 211, 238, 0.32), transparent 45%),
+    radial-gradient(circle at 0% 100%, rgba(168, 85, 247, 0.38), transparent 50%),
+    linear-gradient(135deg, rgba(30, 27, 75, 0.92) 0%, rgba(49, 46, 129, 0.88) 40%, rgba(14, 116, 144, 0.9) 100%);
 }
 
 .bank-card-checking:hover {
-  box-shadow: 0 22px 48px rgba(34, 211, 238, 0.25);
+  box-shadow: 0 20px 48px rgba(34, 211, 238, 0.2);
 }
 
 .bank-card-savings {
   background:
-    radial-gradient(circle at 100% 0%, rgba(251, 191, 36, 0.4), transparent 45%),
-    radial-gradient(circle at 0% 100%, rgba(236, 72, 153, 0.35), transparent 50%),
-    linear-gradient(135deg, #451a03 0%, #78350f 35%, #9a3412 100%);
+    radial-gradient(circle at 100% 0%, rgba(251, 191, 36, 0.35), transparent 45%),
+    radial-gradient(circle at 0% 100%, rgba(236, 72, 153, 0.32), transparent 50%),
+    linear-gradient(135deg, rgba(69, 26, 3, 0.92) 0%, rgba(120, 53, 15, 0.88) 35%, rgba(154, 52, 18, 0.9) 100%);
 }
 
 .bank-card-savings:hover {
-  box-shadow: 0 22px 48px rgba(251, 191, 36, 0.22);
+  box-shadow: 0 20px 48px rgba(251, 191, 36, 0.18);
+}
+
+.bank-card-glass {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .bank-card-shine {
@@ -972,22 +1111,24 @@ body {
   background: linear-gradient(
     115deg,
     transparent 42%,
-    rgba(255, 255, 255, 0.08) 48%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(255, 255, 255, 0.08) 52%,
+    rgba(255, 255, 255, 0.06) 48%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(255, 255, 255, 0.06) 52%,
     transparent 58%
   );
   transform: rotate(8deg);
-  animation: bank-card-shine 6s ease-in-out infinite;
+  animation: bank-card-shine 8s ease-in-out infinite;
   pointer-events: none;
+  z-index: 0;
 }
 
 .bank-card-noise {
   position: absolute;
   inset: 0;
-  opacity: 0.06;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   pointer-events: none;
+  z-index: 0;
 }
 
 .bank-card-top,
@@ -1102,17 +1243,17 @@ body {
 @keyframes bank-card-in {
   from {
     opacity: 0;
-    transform: translateY(20px) rotateX(8deg);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) rotateX(0);
+    transform: translateY(0);
   }
 }
 
 @keyframes bank-card-shine {
-  0%, 100% { transform: translateX(-30%) rotate(8deg); opacity: 0.4; }
-  50% { transform: translateX(30%) rotate(8deg); opacity: 0.9; }
+  0%, 100% { transform: translateX(-35%) rotate(8deg); opacity: 0.25; }
+  50% { transform: translateX(35%) rotate(8deg); opacity: 0.65; }
 }
 
 /* ── ATM ── */
@@ -1311,5 +1452,19 @@ a:hover {
 
   .page-enter {
     animation: none;
+  }
+
+  .glow-border-ring {
+    animation: none;
+    opacity: 0.35;
+  }
+
+  .dashboard-aurora {
+    animation: none;
+  }
+
+  .bank-card-shine {
+    animation: none;
+    opacity: 0.2;
   }
 }

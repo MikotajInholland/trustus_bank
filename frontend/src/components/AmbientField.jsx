@@ -37,8 +37,8 @@ export default function AmbientField() {
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: randomBetween(-0.25, 0.25),
-        vy: randomBetween(-0.25, 0.25),
+        vx: randomBetween(-0.18, 0.18),
+        vy: randomBetween(-0.18, 0.18),
         radius: randomBetween(1, 2.2),
         color: COLORS[Math.floor(Math.random() * COLORS.length)],
         pulse: Math.random() * Math.PI * 2,
@@ -69,7 +69,7 @@ export default function AmbientField() {
           const dy = mouse.y - a.y
           const dist = Math.hypot(dx, dy) || 1
           if (dist < 220) {
-            const force = (220 - dist) / 22000
+            const force = (220 - dist) / 32000
             a.vx += (dx / dist) * force
             a.vy += (dy / dist) * force
           }
@@ -92,7 +92,7 @@ export default function AmbientField() {
           const dy = a.y - b.y
           const dist = Math.hypot(dx, dy)
           if (dist < linkDistance) {
-            const alpha = (1 - dist / linkDistance) * 0.22
+            const alpha = (1 - dist / linkDistance) * 0.18
             ctx.strokeStyle = `rgba(196, 181, 253, ${alpha})`
             ctx.lineWidth = 0.6
             ctx.beginPath()
