@@ -1,4 +1,7 @@
-/** @summary Spring Boot entry point for the TrustUs Bank API. */
+/**
+ * @summary Spring Boot entry point for the TrustUs Bank API. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank;
 
 import org.springframework.boot.SpringApplication;

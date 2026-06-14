@@ -1,4 +1,7 @@
-/** @summary Persistence queries for users. */
+/**
+ * @summary Persistence queries for users. 
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.domain.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,7 @@
-/** @summary BCrypt password encoder bean. */
+/**
+ * @summary BCrypt password encoder bean. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.config;
 
 import org.springframework.beans.factory.annotation.Value;

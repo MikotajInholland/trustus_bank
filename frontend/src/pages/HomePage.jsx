@@ -1,5 +1,7 @@
-// @summary Landing page with links to login and register.
-// Owner: shared
+/**
+ * @summary Landing page with links to login and register.
+ * @author Wesley, Darlington, Mikotaj (shared)
+ */
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 

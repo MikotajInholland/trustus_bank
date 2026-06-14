@@ -1,7 +1,9 @@
-// @summary Employee-initiated external transfers.
-// Owner: Mikotaj (Dev 3 — Auditor)
+/**
+ * @summary Employee-initiated external transfers.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 import { useState } from 'react'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import PageHeader from '../../components/PageHeader'
 
 export default function EmployeeTransferPage() {
@@ -37,7 +39,7 @@ export default function EmployeeTransferPage() {
       setMessage(`Transferred ${Number(form.amount).toFixed(2)} EUR on behalf of ${selected.firstName} ${selected.lastName}`)
       setForm({ toIban: '', amount: '' })
     } catch (err) {
-      setError(err.response?.data?.message || 'Transfer failed')
+      setError(getApiErrorMessage(err, 'Transfer failed'))
     }
   }
 

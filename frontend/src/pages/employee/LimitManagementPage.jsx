@@ -1,14 +1,15 @@
-// @summary View and update customer transfer limits.
-// Owner: Mikotaj (Dev 3 — Auditor)
+/**
+ * @summary View and update customer transfer limits.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 import { useState } from 'react'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import PageHeader from '../../components/PageHeader'
 
 export default function LimitManagementPage() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
   const [selected, setSelected] = useState(null)
-  const [limits, setLimits] = useState({ dailyTransferLimit: 0, absoluteTransferLimit: 0 })
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
@@ -20,10 +21,6 @@ export default function LimitManagementPage() {
   async function loadLimits(customerId) {
     const { data } = await api.get(`/employee/customers/${customerId}/limits`)
     setSelected(data)
-    setLimits({
-      dailyTransferLimit: data.dailyTransferLimit,
-      absoluteTransferLimit: data.absoluteTransferLimit,
-    })
   }
 
   async function saveLimits() {
@@ -31,13 +28,13 @@ export default function LimitManagementPage() {
     setError('')
     try {
       const { data } = await api.put(`/employee/customers/${selected.customerId}/limits`, {
-        dailyTransferLimit: Number(limits.dailyTransferLimit),
-        absoluteTransferLimit: Number(limits.absoluteTransferLimit),
+        dailyTransferLimit: Number(selected.dailyTransferLimit),
+        absoluteTransferLimit: Number(selected.absoluteTransferLimit),
       })
       setSelected(data)
       setMessage('Limits updated successfully')
     } catch (err) {
-      setError(err.response?.data?.message || 'Update failed')
+      setError(getApiErrorMessage(err, 'Update failed'))
     }
   }
 
@@ -86,8 +83,8 @@ export default function LimitManagementPage() {
                   type="number"
                   min="0"
                   step="0.01"
-                  value={limits.dailyTransferLimit}
-                  onChange={(e) => setLimits({ ...limits, dailyTransferLimit: e.target.value })}
+                  value={selected.dailyTransferLimit}
+                  onChange={(e) => setSelected({ ...selected, dailyTransferLimit: e.target.value })}
                 />
               </div>
               <div className="col-md-6">
@@ -97,8 +94,8 @@ export default function LimitManagementPage() {
                   type="number"
                   min="0"
                   step="0.01"
-                  value={limits.absoluteTransferLimit}
-                  onChange={(e) => setLimits({ ...limits, absoluteTransferLimit: e.target.value })}
+                  value={selected.absoluteTransferLimit}
+                  onChange={(e) => setSelected({ ...selected, absoluteTransferLimit: e.target.value })}
                 />
               </div>
               <div className="col-12">

@@ -1,3 +1,7 @@
+/**
+ * @summary Application module.
+ * @author Wesley, Darlington, Mikotaj (shared)
+ */
 /** @summary Source-code ownership map (not shown in UI).
  *
  * Source-code ownership map (not displayed in the UI).

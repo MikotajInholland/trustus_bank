@@ -1,7 +1,9 @@
-// @summary ATM deposit and withdrawal interface.
-// Owner: Darlington (Dev 2 — Teller)
+/**
+ * @summary ATM deposit and withdrawal interface.
+ * @author Darlington (Dev 2 — Teller)
+ */
 import { useState } from 'react'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import PageHeader from '../../components/PageHeader'
 
 export default function AtmPage() {
@@ -19,7 +21,7 @@ export default function AtmPage() {
       setMessage(`${action === 'deposit' ? 'Deposit' : 'Withdrawal'} of €${Number(amount).toFixed(2)} successful`)
       setAmount('')
     } catch (err) {
-      setError(err.response?.data?.message || `${action} failed`)
+      setError(getApiErrorMessage(err, `${action} failed`))
     } finally {
       setLoading(false)
     }

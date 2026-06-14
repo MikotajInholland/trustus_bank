@@ -1,4 +1,7 @@
-// @summary Table for displaying ledger transactions.
+/**
+ * @summary Table for displaying ledger transactions.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 export default function TransactionTable({ transactions, emptyMessage = 'No transactions found' }) {
   return (
     <div className="table-responsive glass-card">

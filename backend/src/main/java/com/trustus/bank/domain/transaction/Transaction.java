@@ -1,4 +1,7 @@
-/** @summary JPA entity for a money movement ledger entry. */
+/**
+ * @summary JPA entity for a money movement ledger entry. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.domain.transaction;
 
 import com.trustus.bank.common.enums.TransactionType;

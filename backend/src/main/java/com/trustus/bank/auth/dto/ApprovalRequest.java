@@ -1,4 +1,7 @@
-/** @summary Request body for employee customer approval. */
+/**
+ * @summary Request body for employee customer approval. 
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.auth.dto;
 
 import java.math.BigDecimal;

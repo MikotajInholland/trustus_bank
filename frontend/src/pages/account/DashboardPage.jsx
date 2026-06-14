@@ -1,5 +1,7 @@
-// @summary Customer account balances and profile overview.
-// Owner: Darlington (Dev 2 — Teller)
+/**
+ * @summary Customer account balances and profile overview.
+ * @author Darlington (Dev 2 — Teller)
+ */
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/client'

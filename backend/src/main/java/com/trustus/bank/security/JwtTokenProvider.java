@@ -1,4 +1,7 @@
-/** @summary Creates and validates JWT access tokens. */
+/**
+ * @summary Creates and validates JWT access tokens. 
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.security;
 
 import com.trustus.bank.config.PasswordConfig.JwtProperties;
@@ -37,10 +40,6 @@ public class JwtTokenProvider {
 
     public String getEmail(String token) {
         return parseClaims(token).getSubject();
-    }
-
-    public String getRole(String token) {
-        return parseClaims(token).get("role", String.class);
     }
 
     public boolean validateToken(String token) {

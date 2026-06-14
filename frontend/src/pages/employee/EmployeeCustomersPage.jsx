@@ -1,5 +1,7 @@
-// @summary Searchable list of active customers.
-// Owner: Darlington (Dev 2 — Teller)
+/**
+ * @summary Searchable list of active customers.
+ * @author Darlington (Dev 2 — Teller)
+ */
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/client'

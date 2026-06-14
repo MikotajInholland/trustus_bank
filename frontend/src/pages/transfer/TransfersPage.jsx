@@ -1,7 +1,9 @@
-// @summary Send external transfers from checking.
-// Owner: Mikotaj (Dev 3 — Auditor)
+/**
+ * @summary Send external transfers from checking.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 import { useState } from 'react'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 
@@ -34,7 +36,7 @@ export default function TransfersPage() {
       setForm({ toIban: '', amount: '' })
       setDirectoryQuery('')
     } catch (err) {
-      setError(err.response?.data?.message || 'Transfer failed')
+      setError(getApiErrorMessage(err, 'Transfer failed'))
     }
   }
 

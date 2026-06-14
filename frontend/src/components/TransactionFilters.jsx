@@ -1,4 +1,7 @@
-// @summary Filter form for transaction history queries.
+/**
+ * @summary Filter form for transaction history queries.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 export default function TransactionFilters({ filters, onChange, onApply }) {
   return (
     <div className="glass-card glass-card-padded mb-3">

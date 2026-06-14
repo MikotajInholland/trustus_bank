@@ -1,4 +1,7 @@
-/** @summary Unit tests for daily and absolute transfer limit checks. */
+/**
+ * @summary Unit tests for daily and absolute transfer limit checks. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.transfer;
 
 import com.trustus.bank.common.enums.AccountType;

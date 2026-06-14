@@ -1,4 +1,7 @@
-/** @summary HTTP security filter chain and route authorization rules. */
+/**
+ * @summary HTTP security filter chain and route authorization rules.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.config;
 
 import com.trustus.bank.security.CustomerApprovalFilter;
@@ -7,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,7 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -41,12 +42,10 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/register",
-                                "/api/register/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/api-docs/**",
-                                "/h2-console/**",
-                                "/actuator/health"
+                                "/h2-console/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                         .requestMatchers("/api/employee/**").hasRole("EMPLOYEE")

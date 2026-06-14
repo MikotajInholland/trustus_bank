@@ -1,4 +1,7 @@
-/** @summary JPA entity for a customer checking or savings account. */
+/**
+ * @summary JPA entity for a customer checking or savings account. 
+ * @author Darlington (Dev 2 — Teller)
+ */
 package com.trustus.bank.domain.account;
 
 import com.trustus.bank.common.enums.AccountType;

@@ -1,4 +1,7 @@
-/** @summary Seeds demo employee and customer accounts on startup. */
+/**
+ * @summary Seeds demo employee and customer accounts on startup. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.config;
 
 import com.trustus.bank.common.enums.AccountType;

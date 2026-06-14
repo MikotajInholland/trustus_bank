@@ -1,4 +1,7 @@
-/** @summary Maps exceptions to consistent JSON error responses. */
+/**
+ * @summary Maps exceptions to consistent JSON error responses. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.common.exception;
 
 import org.slf4j.Logger;
@@ -19,14 +22,12 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(ResourceNotFoundException ex) {
-        return buildResponse(ex.getStatus(), ex.getMessage(), null);
-    }
-
-    @ExceptionHandler(BusinessRuleException.class)
-    public ResponseEntity<Map<String, Object>> handleBusinessRule(BusinessRuleException ex) {
-        return buildResponse(ex.getStatus(), ex.getMessage(), null);
+    @ExceptionHandler({ResourceNotFoundException.class, BusinessRuleException.class})
+    public ResponseEntity<Map<String, Object>> handleApiException(RuntimeException ex) {
+        HttpStatus status = ex instanceof ResourceNotFoundException notFound
+                ? notFound.getStatus()
+                : ((BusinessRuleException) ex).getStatus();
+        return buildResponse(status, ex.getMessage(), null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

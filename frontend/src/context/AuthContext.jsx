@@ -1,5 +1,8 @@
-// @summary JWT auth state and login/logout helpers.
-import { createContext, useContext, useMemo, useState } from 'react'
+/**
+ * @summary JWT auth state and login/logout helpers.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
+import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext(null)
 
@@ -12,22 +15,24 @@ export function AuthProvider({ children }) {
     return token ? { token, role, email, approved } : null
   })
 
-  const value = useMemo(() => ({
-    auth,
-    login: (payload) => {
-      localStorage.setItem('token', payload.token)
-      localStorage.setItem('role', payload.role)
-      localStorage.setItem('email', payload.email)
-      localStorage.setItem('approved', String(payload.approved))
-      setAuth(payload)
-    },
-    logout: () => {
-      localStorage.clear()
-      setAuth(null)
-    },
-  }), [auth])
+  function login(payload) {
+    localStorage.setItem('token', payload.token)
+    localStorage.setItem('role', payload.role)
+    localStorage.setItem('email', payload.email)
+    localStorage.setItem('approved', String(payload.approved))
+    setAuth(payload)
+  }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  function logout() {
+    localStorage.clear()
+    setAuth(null)
+  }
+
+  return (
+    <AuthContext.Provider value={{ auth, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {

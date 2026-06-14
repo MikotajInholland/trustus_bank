@@ -1,5 +1,10 @@
-/** @summary Summary of a customer for employee list views. */
+/**
+ * @summary Summary of a customer for employee list views.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.auth.dto;
+
+import com.trustus.bank.domain.customer.Customer;
 
 public record CustomerSummaryDto(
         Long id,
@@ -9,4 +14,14 @@ public record CustomerSummaryDto(
         String phoneNumber,
         boolean approved
 ) {
+    public static CustomerSummaryDto from(Customer customer) {
+        return new CustomerSummaryDto(
+                customer.getId(),
+                customer.getFirstName(),
+                customer.getLastName(),
+                customer.getEmail(),
+                customer.getPhoneNumber(),
+                customer.isApproved()
+        );
+    }
 }

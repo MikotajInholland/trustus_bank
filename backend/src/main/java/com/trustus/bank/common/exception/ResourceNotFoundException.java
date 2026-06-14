@@ -1,4 +1,7 @@
-/** @summary Exception for missing resources (HTTP 404). */
+/**
+ * @summary Exception for missing resources (HTTP 404). 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.common.exception;
 
 import org.springframework.http.HttpStatus;

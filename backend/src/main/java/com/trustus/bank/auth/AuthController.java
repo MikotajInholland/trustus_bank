@@ -1,4 +1,7 @@
-/** @summary REST API for auth, registration, and customer onboarding. */
+/**
+ * @summary REST API for auth, registration, and customer onboarding.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.auth;
 
 import com.trustus.bank.auth.dto.ApprovalRequest;
@@ -23,20 +26,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST API for auth, registration, and customer onboarding.
- *
- * @author Wesley (Dev 1 — Gatekeeper)
- */
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Auth & Onboarding", description = "Wesley (Dev 1) — Security, identity, and customer onboarding")
 public class AuthController {
 
     private final AuthService authService;
+    private final CustomerApprovalService customerApprovalService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, CustomerApprovalService customerApprovalService) {
         this.authService = authService;
+        this.customerApprovalService = customerApprovalService;
     }
 
     @PostMapping("/auth/login")
@@ -66,13 +66,13 @@ public class AuthController {
             @PathVariable Long customerId,
             @Valid @RequestBody ApprovalRequest request
     ) {
-        return ResponseEntity.ok(authService.approveCustomer(customerId, request));
+        return ResponseEntity.ok(customerApprovalService.approveCustomer(customerId, request));
     }
 
     @PostMapping("/employee/customers/{customerId}/close")
     @Operation(summary = "Close customer accounts and disable user")
     public ResponseEntity<Void> closeCustomer(@PathVariable Long customerId) {
-        authService.closeCustomerAccounts(customerId);
+        customerApprovalService.closeCustomerAccounts(customerId);
         return ResponseEntity.noContent().build();
     }
 }

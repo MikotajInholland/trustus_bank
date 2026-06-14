@@ -1,4 +1,7 @@
-/** @summary ATM deposit or withdrawal amount. */
+/**
+ * @summary ATM deposit or withdrawal amount. 
+ * @author Darlington (Dev 2 — Teller)
+ */
 package com.trustus.bank.account.dto;
 
 import jakarta.validation.constraints.DecimalMin;

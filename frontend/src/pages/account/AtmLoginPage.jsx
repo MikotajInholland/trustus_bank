@@ -1,5 +1,7 @@
-// @summary ATM session login for customers.
-// Owner: Darlington (Dev 2 — Teller)
+/**
+ * @summary ATM session login for customers.
+ * @author Darlington (Dev 2 — Teller)
+ */
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api, { getApiErrorMessage } from '../../api/client'

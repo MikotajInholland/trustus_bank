@@ -1,7 +1,9 @@
-// @summary Move funds between own checking and savings.
-// Owner: Darlington (Dev 2 — Teller)
+/**
+ * @summary Move funds between own checking and savings.
+ * @author Darlington (Dev 2 — Teller)
+ */
 import { useState } from 'react'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 
@@ -23,7 +25,7 @@ export default function InternalTransfersPage() {
       setMessage('Internal transfer completed')
       setForm({ ...form, amount: '' })
     } catch (err) {
-      setError(err.response?.data?.message || 'Transfer failed')
+      setError(getApiErrorMessage(err, 'Transfer failed'))
     }
   }
 

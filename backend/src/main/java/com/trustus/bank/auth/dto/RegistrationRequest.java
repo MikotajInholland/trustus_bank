@@ -1,4 +1,7 @@
-/** @summary New customer registration payload. */
+/**
+ * @summary New customer registration payload. 
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.auth.dto;
 
 import jakarta.validation.constraints.Email;
