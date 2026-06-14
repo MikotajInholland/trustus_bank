@@ -1,3 +1,4 @@
+/** @summary Ledger transaction categories. */
 package com.trustus.bank.common.enums;
 
 public enum TransactionType {

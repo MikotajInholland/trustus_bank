@@ -1,3 +1,4 @@
+/** @summary CORS rules allowing local frontend dev servers. */
 package com.trustus.bank.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,13 +13,13 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${trustus.cors.allowed-origins:http://localhost:5173,http://localhost:4173}")
-    private List<String> allowedOrigins;
+    @Value("${trustus.cors.allowed-origin-patterns:http://localhost:*,http://127.0.0.1:*}")
+    private List<String> allowedOriginPatterns;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(allowedOrigins);
+        config.setAllowedOriginPatterns(allowedOriginPatterns);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

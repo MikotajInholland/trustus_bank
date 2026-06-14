@@ -1,3 +1,4 @@
+/** @summary Persistence queries for users. */
 package com.trustus.bank.domain.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;

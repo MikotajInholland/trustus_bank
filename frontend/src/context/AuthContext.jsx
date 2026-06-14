@@ -1,3 +1,4 @@
+// @summary JWT auth state and login/logout helpers.
 import { createContext, useContext, useMemo, useState } from 'react'
 
 const AuthContext = createContext(null)

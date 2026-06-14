@@ -1,3 +1,4 @@
+/** @summary New customer registration payload. */
 package com.trustus.bank.auth.dto;
 
 import jakarta.validation.constraints.Email;

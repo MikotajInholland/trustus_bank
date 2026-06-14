@@ -1,3 +1,4 @@
+/** @summary Persistence queries for transactions. */
 package com.trustus.bank.domain.transaction;
 
 import org.springframework.data.domain.Page;
@@ -6,11 +7,25 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.trustus.bank.common.enums.TransactionType;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+
+    @Query("""
+            SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
+            WHERE t.fromAccountId IN :accountIds
+              AND t.timestamp >= :since
+              AND t.type IN :types
+            """)
+    BigDecimal sumOutgoingSince(
+            @Param("accountIds") List<Long> accountIds,
+            @Param("since") Instant since,
+            @Param("types") List<TransactionType> types
+    );
 
     @Query("""
             SELECT t FROM Transaction t

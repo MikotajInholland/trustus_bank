@@ -1,3 +1,4 @@
+/** @summary JWT and role returned after successful login. */
 package com.trustus.bank.auth.dto;
 
 public record LoginResponse(

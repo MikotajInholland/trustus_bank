@@ -1,3 +1,4 @@
+/** @summary Simple health check endpoint. */
 package com.trustus.bank.common;
 
 import org.springframework.http.ResponseEntity;

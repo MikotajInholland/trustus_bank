@@ -1,3 +1,4 @@
+/** @summary Customer accounts, dashboard, ATM, and directory endpoints. */
 package com.trustus.bank.account;
 
 import com.trustus.bank.account.dto.AtmTransactionRequest;
@@ -22,9 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * Customer accounts, dashboard, ATM, and directory services.
+ *
+ * @author Darlington (Dev 2 — Teller)
+ */
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Accounts & Dashboard", description = "Developer 2 - Accounts, dashboard, ATM, and directory")
+@Tag(name = "Accounts & Dashboard", description = "Darlington (Dev 2) — Accounts, dashboard, ATM, and directory")
 public class AccountController {
 
     private final AccountService accountService;
@@ -50,8 +56,11 @@ public class AccountController {
 
     @GetMapping("/directory/customers")
     @Operation(summary = "Search customers by name (shared directory service)")
-    public ResponseEntity<List<CustomerDirectoryEntryDto>> searchDirectory(@RequestParam String query) {
-        return ResponseEntity.ok(accountService.searchDirectory(query));
+    public ResponseEntity<List<CustomerDirectoryEntryDto>> searchDirectory(
+            Authentication authentication,
+            @RequestParam String query
+    ) {
+        return ResponseEntity.ok(accountService.searchDirectory(query, authentication.getName()));
     }
 
     @PostMapping("/customer/transfers/internal")

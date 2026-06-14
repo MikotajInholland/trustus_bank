@@ -1,3 +1,4 @@
+/** @summary Extracts JWT from requests and sets Spring Security context. */
 package com.trustus.bank.security;
 
 import com.trustus.bank.domain.user.User;

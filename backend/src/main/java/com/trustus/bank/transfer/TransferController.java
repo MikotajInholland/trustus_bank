@@ -1,3 +1,4 @@
+/** @summary External transfers, limits, and transaction history endpoints. */
 package com.trustus.bank.transfer;
 
 import com.trustus.bank.common.dto.PageResponse;
@@ -25,9 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 import java.time.Instant;
 
+/**
+ * Transfers, limits, transaction history, and global ledger.
+ *
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Transfers & Auditing", description = "Developer 3 - Transfers, limits, and transaction history")
+@Tag(name = "Transfers & Auditing", description = "Mikotaj (Dev 3) — Transfers, limits, and transaction history")
 public class TransferController {
 
     private final TransferService transferService;

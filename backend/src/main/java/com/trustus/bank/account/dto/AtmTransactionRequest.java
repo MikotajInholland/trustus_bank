@@ -1,3 +1,4 @@
+/** @summary ATM deposit or withdrawal amount. */
 package com.trustus.bank.account.dto;
 
 import jakarta.validation.constraints.DecimalMin;

@@ -1,3 +1,5 @@
+// @summary Route definitions and auth-guarded layout.
+// Owner: shared — route map; see src/constants/developers.js for module ownership
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Layout, { ProtectedRoute } from './components/Layout'
@@ -7,10 +9,15 @@ import RegisterPage from './pages/auth/RegisterPage'
 import WaitingPage from './pages/auth/WaitingPage'
 import DashboardPage from './pages/account/DashboardPage'
 import AtmPage from './pages/account/AtmPage'
+import AtmLoginPage from './pages/account/AtmLoginPage'
+import InternalTransfersPage from './pages/account/InternalTransfersPage'
 import TransfersPage from './pages/transfer/TransfersPage'
 import TransactionsPage from './pages/transfer/TransactionsPage'
 import ApprovalQueuePage from './pages/employee/ApprovalQueuePage'
 import EmployeeCustomersPage from './pages/employee/EmployeeCustomersPage'
+import EmployeeTransferPage from './pages/employee/EmployeeTransferPage'
+import EmployeeTransactionHistoryPage from './pages/employee/EmployeeTransactionHistoryPage'
+import AccountClosurePage from './pages/employee/AccountClosurePage'
 import GlobalLedgerPage from './pages/employee/GlobalLedgerPage'
 import LimitManagementPage from './pages/employee/LimitManagementPage'
 
@@ -23,13 +30,23 @@ export default function App() {
             <Route index element={<HomePage />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="register" element={<RegisterPage />} />
-            <Route path="waiting" element={<WaitingPage />} />
+            <Route path="waiting" element={
+              <ProtectedRoute roles={['CUSTOMER']}>
+                <WaitingPage />
+              </ProtectedRoute>
+            } />
 
             <Route path="dashboard" element={
               <ProtectedRoute roles={['CUSTOMER']} requireApproved>
                 <DashboardPage />
               </ProtectedRoute>
             } />
+            <Route path="internal-transfers" element={
+              <ProtectedRoute roles={['CUSTOMER']} requireApproved>
+                <InternalTransfersPage />
+              </ProtectedRoute>
+            } />
+            <Route path="atm/login" element={<AtmLoginPage />} />
             <Route path="atm" element={
               <ProtectedRoute roles={['CUSTOMER']} requireApproved>
                 <AtmPage />
@@ -54,6 +71,21 @@ export default function App() {
             <Route path="employee/customers" element={
               <ProtectedRoute roles={['EMPLOYEE']}>
                 <EmployeeCustomersPage />
+              </ProtectedRoute>
+            } />
+            <Route path="employee/customers/:customerId/transactions" element={
+              <ProtectedRoute roles={['EMPLOYEE']}>
+                <EmployeeTransactionHistoryPage />
+              </ProtectedRoute>
+            } />
+            <Route path="employee/transfers" element={
+              <ProtectedRoute roles={['EMPLOYEE']}>
+                <EmployeeTransferPage />
+              </ProtectedRoute>
+            } />
+            <Route path="employee/closure" element={
+              <ProtectedRoute roles={['EMPLOYEE']}>
+                <AccountClosurePage />
               </ProtectedRoute>
             } />
             <Route path="employee/ledger" element={

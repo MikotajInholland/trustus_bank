@@ -1,3 +1,4 @@
+/** @summary Login credentials (email and password). */
 package com.trustus.bank.auth.dto;
 
 import jakarta.validation.constraints.Email;

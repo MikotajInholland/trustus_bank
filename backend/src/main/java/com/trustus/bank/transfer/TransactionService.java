@@ -1,3 +1,4 @@
+/** @summary Persists transfer and ATM transaction ledger entries. */
 package com.trustus.bank.transfer;
 
 import com.trustus.bank.common.enums.TransactionType;

@@ -1,3 +1,4 @@
+/** @summary Single ledger transaction for API responses. */
 package com.trustus.bank.transfer.dto;
 
 import com.trustus.bank.common.enums.TransactionType;

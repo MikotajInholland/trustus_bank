@@ -1,5 +1,7 @@
+/** @summary HTTP security filter chain and route authorization rules. */
 package com.trustus.bank.config;
 
+import com.trustus.bank.security.CustomerApprovalFilter;
 import com.trustus.bank.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +21,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomerApprovalFilter customerApprovalFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            CustomerApprovalFilter customerApprovalFilter
+    ) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.customerApprovalFilter = customerApprovalFilter;
     }
 
     @Bean
@@ -33,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
+                                "/api/register",
                                 "/api/register/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
@@ -46,7 +54,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(customerApprovalFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

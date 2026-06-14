@@ -1,3 +1,4 @@
+/** @summary Directory search result with name and checking IBAN. */
 package com.trustus.bank.account.dto;
 
 public record CustomerDirectoryEntryDto(

@@ -1,3 +1,4 @@
+/** @summary JPA entity for login credentials and role. */
 package com.trustus.bank.domain.user;
 
 import com.trustus.bank.common.enums.RoleType;
