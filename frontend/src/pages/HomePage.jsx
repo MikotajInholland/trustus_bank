@@ -10,8 +10,10 @@ export default function HomePage() {
 
   return (
     <div className="vstack gap-5">
-      <section className="hero-section">
-        <h1 className="display-title gradient-text">Banking built on trust</h1>
+      <section className="hero-section hero-section-reveal">
+        <div className="hero-aurora" aria-hidden="true" />
+        <p className="hero-eyebrow">TrustUs Bank</p>
+        <h1 className="display-title gradient-text gradient-text-live">Banking built on trust</h1>
         <p className="hero-lead">
           Manage accounts, transfer funds, and track every transaction — all in EUR.
         </p>
