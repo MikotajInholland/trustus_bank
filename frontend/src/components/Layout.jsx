@@ -1,4 +1,7 @@
-// @summary App shell with navigation and logout.
+/**
+ * @summary App shell with navigation and logout.
+ * @author Wesley, Darlington, Mikotaj (shared)
+ */
 import { Link, Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 

@@ -1,4 +1,7 @@
-/** @summary Customer accounts, dashboard, ATM, and directory endpoints. */
+/**
+ * @summary Customer accounts, dashboard, ATM, and directory endpoints. 
+ * @author Darlington (Dev 2 — Teller)
+ */
 package com.trustus.bank.account;
 
 import com.trustus.bank.account.dto.AtmTransactionRequest;
@@ -23,11 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Customer accounts, dashboard, ATM, and directory services.
- *
- * @author Darlington (Dev 2 — Teller)
- */
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Accounts & Dashboard", description = "Darlington (Dev 2) — Accounts, dashboard, ATM, and directory")

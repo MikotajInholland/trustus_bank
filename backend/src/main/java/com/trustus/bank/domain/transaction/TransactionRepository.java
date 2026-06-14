@@ -1,4 +1,7 @@
-/** @summary Persistence queries for transactions. */
+/**
+ * @summary Persistence queries for transactions. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.domain.transaction;
 
 import org.springframework.data.domain.Page;

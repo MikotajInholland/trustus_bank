@@ -1,4 +1,7 @@
-/** @summary Employee request to update customer transfer limits. */
+/**
+ * @summary Employee request to update customer transfer limits. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.transfer.dto;
 
 import jakarta.validation.constraints.DecimalMin;

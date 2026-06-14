@@ -1,7 +1,9 @@
-// @summary Employee queue to approve new customers.
-// Owner: Wesley (Dev 1 — Gatekeeper)
+/**
+ * @summary Employee queue to approve new customers.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 import { useCallback, useEffect, useState } from 'react'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 import Pagination from '../../components/Pagination'
@@ -34,7 +36,7 @@ export default function ApprovalQueuePage() {
       })
       load()
     } catch (err) {
-      setError(err.response?.data?.message || 'Approval failed')
+      setError(getApiErrorMessage(err, 'Approval failed'))
     }
   }
 

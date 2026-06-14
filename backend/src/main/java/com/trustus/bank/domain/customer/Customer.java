@@ -1,4 +1,7 @@
-/** @summary JPA entity for a bank customer profile. */
+/**
+ * @summary JPA entity for a bank customer profile. 
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.domain.customer;
 
 import jakarta.persistence.Column;

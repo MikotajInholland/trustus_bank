@@ -1,4 +1,7 @@
-/** @summary Transfer between a customer's own accounts. */
+/**
+ * @summary Transfer between a customer's own accounts. 
+ * @author Darlington (Dev 2 — Teller)
+ */
 package com.trustus.bank.account.dto;
 
 import com.trustus.bank.common.enums.AccountType;

@@ -1,4 +1,7 @@
-/** @summary CORS rules allowing local frontend dev servers. */
+/**
+ * @summary CORS rules allowing local frontend dev servers. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.config;
 
 import org.springframework.beans.factory.annotation.Value;

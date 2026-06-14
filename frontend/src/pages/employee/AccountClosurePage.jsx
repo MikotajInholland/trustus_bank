@@ -1,7 +1,9 @@
-// @summary Employee tool to close customer accounts.
-// Owner: Wesley (Dev 1 — Gatekeeper)
+/**
+ * @summary Employee tool to close customer accounts.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 import { useState } from 'react'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 
@@ -30,7 +32,7 @@ export default function AccountClosurePage() {
       setSelected(null)
       setResults((current) => current.filter((c) => c.customerId !== selected.customerId))
     } catch (err) {
-      setError(err.response?.data?.message || 'Closure failed')
+      setError(getApiErrorMessage(err, 'Closure failed'))
     }
   }
 

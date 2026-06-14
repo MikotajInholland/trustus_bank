@@ -1,5 +1,7 @@
-// @summary Customer transaction history with filters.
-// Owner: Mikotaj (Dev 3 — Auditor)
+/**
+ * @summary Customer transaction history with filters.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 import { useCallback, useEffect, useState } from 'react'
 import api from '../../api/client'
 import PageHeader from '../../components/PageHeader'

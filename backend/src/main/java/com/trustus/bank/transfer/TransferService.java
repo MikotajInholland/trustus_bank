@@ -1,6 +1,10 @@
-/** @summary External and employee transfers with limit enforcement. */
+/**
+ * @summary External and employee transfers with limit enforcement.
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.transfer;
 
+import com.trustus.bank.common.BankConstants;
 import com.trustus.bank.common.exception.BusinessRuleException;
 import com.trustus.bank.common.exception.ResourceNotFoundException;
 import com.trustus.bank.common.enums.AccountType;
@@ -10,8 +14,7 @@ import com.trustus.bank.domain.account.AccountRepository;
 import com.trustus.bank.domain.customer.Customer;
 import com.trustus.bank.domain.customer.CustomerRepository;
 import com.trustus.bank.domain.transaction.Transaction;
-import com.trustus.bank.domain.user.User;
-import com.trustus.bank.domain.user.UserRepository;
+import com.trustus.bank.domain.transaction.TransactionRepository;
 import com.trustus.bank.transfer.dto.CustomerLimitsDto;
 import com.trustus.bank.transfer.dto.ExternalTransferRequest;
 import com.trustus.bank.transfer.dto.TransactionDto;
@@ -26,44 +29,34 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
-/**
- * @author Mikotaj (Dev 3 — Auditor)
- */
 @Service
 public class TransferService {
 
-    private static final String CURRENCY = "EUR";
-
     private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
-    private final TransactionRepositoryFacade transactionRepositoryFacade;
+    private final TransactionRepository transactionRepository;
     private final TransactionService transactionService;
     private final LimitService limitService;
 
     public TransferService(
             CustomerRepository customerRepository,
             AccountRepository accountRepository,
-            UserRepository userRepository,
-            TransactionRepositoryFacade transactionRepositoryFacade,
+            TransactionRepository transactionRepository,
             TransactionService transactionService,
             LimitService limitService
     ) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
-        this.transactionRepositoryFacade = transactionRepositoryFacade;
+        this.transactionRepository = transactionRepository;
         this.transactionService = transactionService;
         this.limitService = limitService;
     }
 
     @Transactional
     public void customerExternalTransfer(String email, ExternalTransferRequest request) {
-        Customer sender = findCustomerByEmail(email);
+        Customer sender = customerRepository.requireByEmail(email);
         Account from = getCheckingAccount(sender.getId());
-        Account to = accountRepository.findByIban(request.toIban())
-                .filter(Account::isActive)
-                .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
+        Account to = resolveActiveAccountByIban(request.toIban());
 
         if (to.getCustomerId().equals(sender.getId())) {
             throw new BusinessRuleException("Cannot transfer to your own account");
@@ -74,38 +67,22 @@ public class TransferService {
 
     @Transactional
     public void employeeExternalTransfer(Long fromCustomerId, ExternalTransferRequest request) {
-        Customer sender = customerRepository.findById(fromCustomerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Customer sender = customerRepository.requireById(fromCustomerId);
         Account from = getCheckingAccount(sender.getId());
-        Account to = accountRepository.findByIban(request.toIban())
-                .filter(Account::isActive)
-                .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
-
+        Account to = resolveActiveAccountByIban(request.toIban());
         executeTransfer(from, to, request.amount(), sender, TransactionType.EMPLOYEE_TRANSFER);
     }
 
     public CustomerLimitsDto getLimits(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-
-        return new CustomerLimitsDto(
-                customer.getId(),
-                customer.getFullName(),
-                customer.getDailyTransferLimit(),
-                customer.getAbsoluteTransferLimit(),
-                CURRENCY
-        );
+        return toLimitsDto(customerRepository.requireById(customerId));
     }
 
     @Transactional
     public CustomerLimitsDto updateLimits(Long customerId, UpdateLimitsRequest request) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-
+        Customer customer = customerRepository.requireById(customerId);
         customer.setDailyTransferLimit(request.dailyTransferLimit());
         customer.setAbsoluteTransferLimit(request.absoluteTransferLimit());
-
-        return getLimits(customerId);
+        return toLimitsDto(customer);
     }
 
     public PageResponse<TransactionDto> getCustomerTransactions(
@@ -118,8 +95,10 @@ public class TransferService {
             String iban,
             Pageable pageable
     ) {
-        Customer customer = findCustomerByEmail(email);
-        return getTransactionsForCustomer(customer, startDate, endDate, minAmount, maxAmount, exactAmount, iban, pageable);
+        return getTransactionsForCustomer(
+                customerRepository.requireByEmail(email),
+                startDate, endDate, minAmount, maxAmount, exactAmount, iban, pageable
+        );
     }
 
     public PageResponse<TransactionDto> getTransactionsForCustomerId(
@@ -132,14 +111,14 @@ public class TransferService {
             String iban,
             Pageable pageable
     ) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-        return getTransactionsForCustomer(customer, startDate, endDate, minAmount, maxAmount, exactAmount, iban, pageable);
+        return getTransactionsForCustomer(
+                customerRepository.requireById(customerId),
+                startDate, endDate, minAmount, maxAmount, exactAmount, iban, pageable
+        );
     }
 
     public PageResponse<TransactionDto> getGlobalLedger(Pageable pageable) {
-        Page<Transaction> page = transactionRepositoryFacade.findAll(pageable);
-        return toPageResponse(page);
+        return PageResponse.from(transactionRepository.findAllByOrderByTimestampDesc(pageable), this::toDto);
     }
 
     private PageResponse<TransactionDto> getTransactionsForCustomer(
@@ -156,6 +135,10 @@ public class TransferService {
                 .map(Account::getId)
                 .toList();
 
+        if (accountIds.isEmpty()) {
+            return PageResponse.from(Page.empty(pageable));
+        }
+
         Long ibanAccountId = null;
         if (iban != null && !iban.isBlank()) {
             ibanAccountId = accountRepository.findByIban(iban)
@@ -163,18 +146,16 @@ public class TransferService {
                     .orElseThrow(() -> new ResourceNotFoundException("Account not found for IBAN"));
         }
 
-        Page<Transaction> page = transactionRepositoryFacade.findFiltered(
-                accountIds,
-                startDate,
-                endDate,
-                minAmount,
-                maxAmount,
-                exactAmount,
-                ibanAccountId,
-                pageable
+        Page<Transaction> page = transactionRepository.findFiltered(
+                accountIds, startDate, endDate, minAmount, maxAmount, exactAmount, ibanAccountId, pageable
         );
+        return PageResponse.from(page, this::toDto);
+    }
 
-        return toPageResponse(page);
+    private Account resolveActiveAccountByIban(String iban) {
+        return accountRepository.findByIban(iban)
+                .filter(Account::isActive)
+                .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
     }
 
     private void executeTransfer(Account from, Account to, BigDecimal amount, Customer sender, TransactionType type) {
@@ -189,16 +170,7 @@ public class TransferService {
 
         from.setBalance(from.getBalance().subtract(amount));
         to.setBalance(to.getBalance().add(amount));
-
-        User user = userRepository.findById(sender.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        transactionService.recordExternalTransfer(from, to, amount, user.getId(), type);
-    }
-
-    private Customer findCustomerByEmail(String email) {
-        return customerRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        transactionService.recordExternalTransfer(from, to, amount, sender.getUserId(), type);
     }
 
     private Account getCheckingAccount(Long customerId) {
@@ -207,23 +179,23 @@ public class TransferService {
                 .orElseThrow(() -> new ResourceNotFoundException("Checking account not found"));
     }
 
-    private PageResponse<TransactionDto> toPageResponse(Page<Transaction> page) {
-        List<TransactionDto> content = page.getContent().stream()
-                .map(this::toDto)
-                .toList();
-        return new PageResponse<>(content, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages());
+    private CustomerLimitsDto toLimitsDto(Customer customer) {
+        return new CustomerLimitsDto(
+                customer.getId(),
+                customer.getFullName(),
+                customer.getDailyTransferLimit(),
+                customer.getAbsoluteTransferLimit(),
+                BankConstants.CURRENCY
+        );
     }
 
     private TransactionDto toDto(Transaction transaction) {
-        String fromIban = resolveIban(transaction.getFromAccountId());
-        String toIban = resolveIban(transaction.getToAccountId());
-
         return new TransactionDto(
                 transaction.getId(),
-                fromIban,
-                toIban,
+                resolveIban(transaction.getFromAccountId()),
+                resolveIban(transaction.getToAccountId()),
                 transaction.getAmount(),
-                CURRENCY,
+                BankConstants.CURRENCY,
                 transaction.getTimestamp(),
                 transaction.getType()
         );

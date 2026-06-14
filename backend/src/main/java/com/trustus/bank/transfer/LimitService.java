@@ -1,4 +1,7 @@
-/** @summary Validates daily and absolute transfer limits per customer. */
+/**
+ * @summary Validates daily and absolute transfer limits per customer. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.transfer;
 
 import com.trustus.bank.common.enums.TransactionType;
@@ -15,9 +18,6 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 
-/**
- * Mikotaj (Dev 3 — Auditor): transfer limit validation and daily outgoing totals.
- */
 @Service
 public class LimitService {
 

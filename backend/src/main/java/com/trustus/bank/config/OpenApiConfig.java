@@ -1,4 +1,7 @@
-/** @summary Swagger/OpenAPI metadata and JWT security scheme. */
+/**
+ * @summary Swagger/OpenAPI metadata and JWT security scheme. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.config;
 
 import io.swagger.v3.oas.models.Components;

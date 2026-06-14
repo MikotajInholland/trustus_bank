@@ -1,4 +1,7 @@
-/** @summary Account type, IBAN, and balance for API responses. */
+/**
+ * @summary Account type, IBAN, and balance for API responses. 
+ * @author Darlington (Dev 2 — Teller)
+ */
 package com.trustus.bank.account.dto;
 
 import com.trustus.bank.common.enums.AccountType;

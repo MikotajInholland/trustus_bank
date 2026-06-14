@@ -1,8 +1,10 @@
-// @summary New customer registration form.
-// Owner: Wesley (Dev 1 — Gatekeeper)
+/**
+ * @summary New customer registration form.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import api from '../../api/client'
+import api, { getApiErrorMessage } from '../../api/client'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 
@@ -32,7 +34,7 @@ export default function RegisterPage() {
       setMessage(data.message)
       setTimeout(() => navigate('/login'), 2000)
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed')
+      setError(getApiErrorMessage(err, 'Registration failed'))
     }
   }
 

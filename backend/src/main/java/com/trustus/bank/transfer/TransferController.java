@@ -1,4 +1,7 @@
-/** @summary External transfers, limits, and transaction history endpoints. */
+/**
+ * @summary External transfers, limits, and transaction history endpoints. 
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 package com.trustus.bank.transfer;
 
 import com.trustus.bank.common.dto.PageResponse;

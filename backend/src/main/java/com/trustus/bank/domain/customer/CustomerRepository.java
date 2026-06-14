@@ -1,6 +1,10 @@
-/** @summary Persistence queries for customers including search. */
+/**
+ * @summary Persistence queries for customers including search.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.domain.customer;
 
+import com.trustus.bank.common.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,31 +24,28 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     boolean existsByBsn(String bsn);
 
-    Page<Customer> findByApprovedTrue(Pageable pageable);
+    default Customer requireById(Long id) {
+        return findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+    }
 
-    Page<Customer> findByApprovedFalse(Pageable pageable);
+    default Customer requireByEmail(String email) {
+        return findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+    }
 
     @Query("""
             SELECT c FROM Customer c
-            WHERE c.approved = false
+            WHERE c.approved = :approved
               AND (:search IS NULL OR :search = ''
                    OR LOWER(c.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(CONCAT(c.firstName, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%')))
             """)
-    Page<Customer> findPendingBySearch(@Param("search") String search, Pageable pageable);
-
-    @Query("""
-            SELECT c FROM Customer c
-            WHERE c.approved = true
-              AND (:search IS NULL OR :search = ''
-                   OR LOWER(c.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
-                   OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
-                   OR LOWER(CONCAT(c.firstName, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :search, '%'))
-                   OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%')))
-            """)
-    Page<Customer> findApprovedBySearch(@Param("search") String search, Pageable pageable);
+    Page<Customer> findByApprovedAndSearch(
+            @Param("approved") boolean approved,
+            @Param("search") String search,
+            Pageable pageable
+    );
 
     @Query("""
             SELECT c FROM Customer c

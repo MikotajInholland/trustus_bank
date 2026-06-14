@@ -1,4 +1,7 @@
-/** @summary Blocks unapproved customers from customer and ATM routes. */
+/**
+ * @summary Blocks unapproved customers from customer and ATM routes. 
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,9 +20,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * Wesley (Dev 1 — Gatekeeper): blocks unapproved customers from banking endpoints.
- */
 @Component
 public class CustomerApprovalFilter extends OncePerRequestFilter {
 

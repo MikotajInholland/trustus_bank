@@ -1,4 +1,7 @@
-// @summary Reusable paginated list controls.
+/**
+ * @summary Reusable paginated list controls.
+ * @author Wesley, Darlington, Mikotaj (shared)
+ */
 export default function Pagination({ page, totalPages, onPageChange }) {
   if (totalPages <= 1) return null
 

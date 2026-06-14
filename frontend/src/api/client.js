@@ -1,4 +1,7 @@
-// @summary Axios instance with JWT and error helpers.
+/**
+ * @summary Axios instance with JWT and error helpers.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 import axios from 'axios'
 
 const api = axios.create({

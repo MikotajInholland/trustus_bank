@@ -1,4 +1,7 @@
-// @summary Glassmorphism card wrapper for page sections.
+/**
+ * @summary Glassmorphism card wrapper for page sections.
+ * @author Wesley, Darlington, Mikotaj (shared)
+ */
 export default function GlassCard({ children, className = '', padding = true, style = {} }) {
   return (
     <div

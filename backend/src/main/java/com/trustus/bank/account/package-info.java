@@ -1,7 +1,9 @@
-/** @summary Accounts, dashboard, ATM, and directory (Darlington — Dev 2).
+/**
+ * @summary Accounts, dashboard, ATM, and directory (Darlington — Dev 2).
  *
  * Darlington — Dev 2 (Teller)
  * <p>
  * Accounts, dashboard, ATM, and shared directory services.
+ * @author Darlington (Dev 2 — Teller)
  */
 package com.trustus.bank.account;

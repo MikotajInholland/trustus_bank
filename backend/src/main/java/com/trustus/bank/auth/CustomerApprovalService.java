@@ -1,8 +1,12 @@
-/** @summary Approves customers and provisions checking/savings accounts. */
+/**
+ * @summary Approves customers and provisions checking/savings accounts.
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 package com.trustus.bank.auth;
 
 import com.trustus.bank.auth.dto.ApprovalRequest;
 import com.trustus.bank.auth.dto.CustomerSummaryDto;
+import com.trustus.bank.common.exception.BusinessRuleException;
 import com.trustus.bank.common.exception.ResourceNotFoundException;
 import com.trustus.bank.domain.account.Account;
 import com.trustus.bank.domain.account.AccountRepository;
@@ -42,11 +46,10 @@ public class CustomerApprovalService {
 
     @Transactional
     public CustomerSummaryDto approveCustomer(Long customerId, ApprovalRequest request) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Customer customer = customerRepository.requireById(customerId);
 
         if (customer.isApproved()) {
-            throw new com.trustus.bank.common.exception.BusinessRuleException("Customer is already approved");
+            throw new BusinessRuleException("Customer is already approved");
         }
 
         customer.setApproved(true);
@@ -56,27 +59,17 @@ public class CustomerApprovalService {
         createAccountIfMissing(customer, AccountType.CHECKING);
         createAccountIfMissing(customer, AccountType.SAVINGS);
 
-        return new CustomerSummaryDto(
-                customer.getId(),
-                customer.getFirstName(),
-                customer.getLastName(),
-                customer.getEmail(),
-                customer.getPhoneNumber(),
-                customer.isApproved()
-        );
+        return CustomerSummaryDto.from(customer);
     }
 
     @Transactional
     public void closeCustomerAccounts(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Customer customer = customerRepository.requireById(customerId);
 
         User user = userRepository.findById(customer.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        List<Account> accounts = accountRepository.findByCustomerId(customerId);
-        accounts.forEach(account -> account.setActive(false));
-
+        accountRepository.findByCustomerId(customerId).forEach(account -> account.setActive(false));
         user.setEnabled(false);
         customer.setApproved(false);
     }

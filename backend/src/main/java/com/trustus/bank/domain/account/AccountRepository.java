@@ -1,4 +1,7 @@
-/** @summary Persistence queries for accounts. */
+/**
+ * @summary Persistence queries for accounts. 
+ * @author Darlington (Dev 2 — Teller)
+ */
 package com.trustus.bank.domain.account;
 
 import com.trustus.bank.common.enums.AccountType;
