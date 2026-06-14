@@ -1,3 +1,4 @@
+/** @summary Login, registration, and pending approval listing. */
 package com.trustus.bank.auth;
 
 import com.trustus.bank.auth.dto.ApprovalRequest;
@@ -21,6 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 @Service
 public class AuthService {
 
@@ -45,7 +49,8 @@ public class AuthService {
     }
 
     public LoginResponse login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
+        String email = request.email().trim().toLowerCase();
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessRuleException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
@@ -88,8 +93,8 @@ public class AuthService {
         );
     }
 
-    public PageResponse<CustomerSummaryDto> listPendingApprovals(Pageable pageable) {
-        Page<CustomerSummaryDto> page = customerRepository.findByApprovedFalse(pageable)
+    public PageResponse<CustomerSummaryDto> listPendingApprovals(Pageable pageable, String search) {
+        Page<CustomerSummaryDto> page = customerRepository.findPendingBySearch(normalizeSearch(search), pageable)
                 .map(this::toSummary);
         return toPageResponse(page);
     }
@@ -129,5 +134,9 @@ public class AuthService {
                 page.getTotalElements(),
                 page.getTotalPages()
         );
+    }
+
+    private String normalizeSearch(String search) {
+        return search == null || search.isBlank() ? null : search.trim();
     }
 }

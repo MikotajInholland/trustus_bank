@@ -1,3 +1,4 @@
+/** @summary REST API for auth, registration, and customer onboarding. */
 package com.trustus.bank.auth;
 
 import com.trustus.bank.auth.dto.ApprovalRequest;
@@ -22,9 +23,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST API for auth, registration, and customer onboarding.
+ *
+ * @author Wesley (Dev 1 — Gatekeeper)
+ */
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Auth & Onboarding", description = "Developer 1 - Security, identity, and customer onboarding")
+@Tag(name = "Auth & Onboarding", description = "Wesley (Dev 1) — Security, identity, and customer onboarding")
 public class AuthController {
 
     private final AuthService authService;
@@ -51,8 +57,7 @@ public class AuthController {
             @PageableDefault(size = 20) Pageable pageable,
             @RequestParam(required = false) String search
     ) {
-        // TODO: implement search/filter support
-        return ResponseEntity.ok(authService.listPendingApprovals(pageable));
+        return ResponseEntity.ok(authService.listPendingApprovals(pageable, search));
     }
 
     @PostMapping("/employee/approvals/{customerId}")

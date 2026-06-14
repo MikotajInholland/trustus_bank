@@ -1,46 +1,48 @@
-import { useEffect, useState } from 'react'
+// @summary Customer transaction history with filters.
+// Owner: Mikotaj (Dev 3 — Auditor)
+import { useCallback, useEffect, useState } from 'react'
 import api from '../../api/client'
+import PageHeader from '../../components/PageHeader'
+import Pagination from '../../components/Pagination'
+import TransactionFilters, { buildTransactionParams } from '../../components/TransactionFilters'
+import TransactionTable from '../../components/TransactionTable'
+
+const EMPTY_FILTERS = {
+  startDate: '', endDate: '', minAmount: '', maxAmount: '', exactAmount: '', iban: '',
+}
 
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([])
+  const [filters, setFilters] = useState(EMPTY_FILTERS)
+  const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS)
+  const [page, setPage] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
-  useEffect(() => {
-    api.get('/customer/transactions')
-      .then(({ data }) => setTransactions(data.content || []))
+  const load = useCallback(() => {
+    const params = buildTransactionParams(appliedFilters, page, 20)
+    api.get('/customer/transactions', { params })
+      .then(({ data }) => {
+        setTransactions(data.content || [])
+        setTotalPages(data.totalPages || 0)
+      })
       .catch(() => setTransactions([]))
-  }, [])
+  }, [appliedFilters, page])
+
+  useEffect(() => { load() }, [load])
+
+  function applyFilters() {
+    setPage(0)
+    setAppliedFilters({ ...filters })
+  }
 
   return (
     <div>
-      <h1 className="h4">Transaction History</h1>
-      <p className="text-muted small">Developer 3 — pagination and filters to be implemented</p>
-      <div className="table-responsive card shadow-sm">
-        <table className="table mb-0">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Amount</th>
-              <th>When</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.length === 0 && (
-              <tr><td colSpan="5" className="text-muted">No transactions yet</td></tr>
-            )}
-            {transactions.map((tx) => (
-              <tr key={tx.id}>
-                <td>{tx.type}</td>
-                <td>{tx.fromIban || '-'}</td>
-                <td>{tx.toIban || '-'}</td>
-                <td>{tx.amount} {tx.currency}</td>
-                <td>{new Date(tx.timestamp).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <PageHeader
+        title="Transaction History"
+        subtitle="Filter by date, amount, or IBAN."
+      />      <TransactionFilters filters={filters} onChange={setFilters} onApply={applyFilters} />
+      <TransactionTable transactions={transactions} />
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   )
 }

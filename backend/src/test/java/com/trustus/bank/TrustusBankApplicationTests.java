@@ -1,3 +1,4 @@
+/** @summary Smoke test that the Spring context loads. */
 package com.trustus.bank;
 
 import org.junit.jupiter.api.Test;

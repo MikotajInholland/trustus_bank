@@ -1,3 +1,4 @@
+/** @summary Swagger/OpenAPI metadata and JWT security scheme. */
 package com.trustus.bank.config;
 
 import io.swagger.v3.oas.models.Components;
@@ -18,7 +19,7 @@ public class OpenApiConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("TrustUs Bank API")
-                        .description("REST API for the TrustUs Bank student project")
+                        .description("REST API for TrustUs Bank — all amounts in EUR.")
                         .version("0.0.1")
                         .contact(new Contact().name("TrustUs Bank Team")))
                 .addSecurityItem(new SecurityRequirement().addList(schemeName))

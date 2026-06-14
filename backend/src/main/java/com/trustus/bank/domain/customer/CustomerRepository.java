@@ -1,3 +1,4 @@
+/** @summary Persistence queries for customers including search. */
 package com.trustus.bank.domain.customer;
 
 import org.springframework.data.domain.Page;
@@ -25,9 +26,32 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     @Query("""
             SELECT c FROM Customer c
-            WHERE LOWER(c.firstName) LIKE LOWER(CONCAT('%', :query, '%'))
+            WHERE c.approved = false
+              AND (:search IS NULL OR :search = ''
+                   OR LOWER(c.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(CONCAT(c.firstName, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%')))
+            """)
+    Page<Customer> findPendingBySearch(@Param("search") String search, Pageable pageable);
+
+    @Query("""
+            SELECT c FROM Customer c
+            WHERE c.approved = true
+              AND (:search IS NULL OR :search = ''
+                   OR LOWER(c.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(CONCAT(c.firstName, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%')))
+            """)
+    Page<Customer> findApprovedBySearch(@Param("search") String search, Pageable pageable);
+
+    @Query("""
+            SELECT c FROM Customer c
+            WHERE c.approved = true
+              AND (LOWER(c.firstName) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :query, '%'))
-               OR LOWER(CONCAT(c.firstName, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(CONCAT(c.firstName, ' ', c.lastName)) LIKE LOWER(CONCAT('%', :query, '%')))
             """)
     List<Customer> searchByName(@Param("query") String query);
 }

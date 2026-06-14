@@ -1,3 +1,4 @@
+/** @summary Creates and validates JWT access tokens. */
 package com.trustus.bank.security;
 
 import com.trustus.bank.config.PasswordConfig.JwtProperties;

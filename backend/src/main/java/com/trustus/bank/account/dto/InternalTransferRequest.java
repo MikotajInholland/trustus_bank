@@ -1,3 +1,4 @@
+/** @summary Transfer between a customer's own accounts. */
 package com.trustus.bank.account.dto;
 
 import com.trustus.bank.common.enums.AccountType;

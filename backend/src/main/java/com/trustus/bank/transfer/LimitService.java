@@ -1,9 +1,11 @@
+/** @summary Validates daily and absolute transfer limits per customer. */
 package com.trustus.bank.transfer;
 
-import com.trustus.bank.common.exception.BusinessRuleException;
 import com.trustus.bank.common.enums.TransactionType;
+import com.trustus.bank.common.exception.BusinessRuleException;
+import com.trustus.bank.domain.account.Account;
+import com.trustus.bank.domain.account.AccountRepository;
 import com.trustus.bank.domain.customer.Customer;
-import com.trustus.bank.domain.transaction.Transaction;
 import com.trustus.bank.domain.transaction.TransactionRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,39 +15,50 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
 
+/**
+ * Mikotaj (Dev 3 — Auditor): transfer limit validation and daily outgoing totals.
+ */
 @Service
 public class LimitService {
 
-    private final TransactionRepository transactionRepository;
+    private static final List<TransactionType> OUTGOING_TYPES = List.of(
+            TransactionType.EXTERNAL_TRANSFER,
+            TransactionType.EMPLOYEE_TRANSFER,
+            TransactionType.ATM_WITHDRAWAL
+    );
 
-    public LimitService(TransactionRepository transactionRepository) {
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
+
+    public LimitService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
     public void validateTransferLimits(Customer customer, BigDecimal amount) {
         if (amount.compareTo(customer.getAbsoluteTransferLimit()) > 0) {
-            throw new BusinessRuleException("Transfer exceeds absolute limit");
+            throw new BusinessRuleException("Transfer exceeds absolute limit of "
+                    + customer.getAbsoluteTransferLimit() + " EUR");
         }
 
         BigDecimal dailyTotal = calculateDailyOutgoingTotal(customer.getId());
         if (dailyTotal.add(amount).compareTo(customer.getDailyTransferLimit()) > 0) {
-            throw new BusinessRuleException("Transfer exceeds daily limit");
+            throw new BusinessRuleException("Transfer exceeds daily limit of "
+                    + customer.getDailyTransferLimit() + " EUR (already used "
+                    + dailyTotal + " EUR today)");
         }
     }
 
-    private BigDecimal calculateDailyOutgoingTotal(Long customerId) {
-        // TODO: optimize with dedicated query; skeleton uses in-memory filter
-        Instant startOfDay = LocalDate.now(ZoneOffset.UTC).atStartOfDay().toInstant(ZoneOffset.UTC);
-        return transactionRepository.findAll().stream()
-                .filter(tx -> tx.getTimestamp().isAfter(startOfDay))
-                .filter(tx -> isOutgoingTransfer(tx))
-                .map(Transaction::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+    public BigDecimal calculateDailyOutgoingTotal(Long customerId) {
+        List<Long> accountIds = accountRepository.findByCustomerId(customerId).stream()
+                .map(Account::getId)
+                .toList();
 
-    private boolean isOutgoingTransfer(Transaction transaction) {
-        return transaction.getType() == TransactionType.EXTERNAL_TRANSFER
-                || transaction.getType() == TransactionType.EMPLOYEE_TRANSFER
-                || transaction.getType() == TransactionType.ATM_WITHDRAWAL;
+        if (accountIds.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        Instant startOfDay = LocalDate.now(ZoneOffset.UTC).atStartOfDay().toInstant(ZoneOffset.UTC);
+        return transactionRepository.sumOutgoingSince(accountIds, startOfDay, OUTGOING_TYPES);
     }
 }

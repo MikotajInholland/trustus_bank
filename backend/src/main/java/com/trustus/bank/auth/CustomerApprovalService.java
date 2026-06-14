@@ -1,3 +1,4 @@
+/** @summary Approves customers and provisions checking/savings accounts. */
 package com.trustus.bank.auth;
 
 import com.trustus.bank.auth.dto.ApprovalRequest;
@@ -86,7 +87,13 @@ public class CustomerApprovalService {
     }
 
     private String generateIban() {
+        String checkDigits = String.format("%02d", RANDOM.nextInt(100));
         String accountNumber = String.format("%09d", RANDOM.nextInt(1_000_000_000));
-        return "NLxx" + bankCode + "0" + accountNumber;
+        String iban = "NL" + checkDigits + bankCode + "0" + accountNumber;
+        while (accountRepository.existsByIban(iban)) {
+            accountNumber = String.format("%09d", RANDOM.nextInt(1_000_000_000));
+            iban = "NL" + checkDigits + bankCode + "0" + accountNumber;
+        }
+        return iban;
     }
 }

@@ -1,3 +1,4 @@
+/** @summary Dashboard, directory search, internal transfers, and ATM operations. */
 package com.trustus.bank.account;
 
 import com.trustus.bank.account.dto.AccountDto;
@@ -16,6 +17,7 @@ import com.trustus.bank.domain.customer.Customer;
 import com.trustus.bank.domain.customer.CustomerRepository;
 import com.trustus.bank.domain.user.User;
 import com.trustus.bank.domain.user.UserRepository;
+import com.trustus.bank.transfer.LimitService;
 import com.trustus.bank.transfer.TransactionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * @author Darlington (Dev 2 — Teller)
+ */
 @Service
 public class AccountService {
 
@@ -34,17 +39,20 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final TransactionService transactionService;
+    private final LimitService limitService;
 
     public AccountService(
             CustomerRepository customerRepository,
             AccountRepository accountRepository,
             UserRepository userRepository,
-            TransactionService transactionService
+            TransactionService transactionService,
+            LimitService limitService
     ) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
         this.userRepository = userRepository;
         this.transactionService = transactionService;
+        this.limitService = limitService;
     }
 
     public CustomerDashboardDto getDashboardForEmail(String email) {
@@ -71,16 +79,18 @@ public class AccountService {
     }
 
     public PageResponse<CustomerSummaryDto> listActiveCustomers(Pageable pageable, String search) {
-        Page<Customer> page = customerRepository.findByApprovedTrue(pageable);
-        // TODO: apply search filter
+        String normalizedSearch = search == null || search.isBlank() ? null : search.trim();
+        Page<Customer> page = customerRepository.findApprovedBySearch(normalizedSearch, pageable);
         List<CustomerSummaryDto> content = page.getContent().stream()
                 .map(this::toSummary)
                 .toList();
         return new PageResponse<>(content, page.getNumber(), page.getSize(), page.getTotalElements(), page.getTotalPages());
     }
 
-    public List<CustomerDirectoryEntryDto> searchDirectory(String query) {
+    public List<CustomerDirectoryEntryDto> searchDirectory(String query, String callerEmail) {
+        var excludeCustomerId = customerRepository.findByEmail(callerEmail).map(Customer::getId);
         return customerRepository.searchByName(query).stream()
+                .filter(customer -> excludeCustomerId.isEmpty() || !customer.getId().equals(excludeCustomerId.get()))
                 .map(this::toDirectoryEntry)
                 .toList();
     }
@@ -125,7 +135,7 @@ public class AccountService {
             throw new BusinessRuleException("Insufficient balance");
         }
 
-        // TODO: enforce daily/absolute transfer limits via LimitService
+        limitService.validateTransferLimits(customer, request.amount());
         checking.setBalance(checking.getBalance().subtract(request.amount()));
 
         User user = userRepository.findByEmail(email)

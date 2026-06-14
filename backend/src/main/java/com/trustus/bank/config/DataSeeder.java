@@ -1,6 +1,12 @@
+/** @summary Seeds demo employee and customer accounts on startup. */
 package com.trustus.bank.config;
 
+import com.trustus.bank.common.enums.AccountType;
 import com.trustus.bank.common.enums.RoleType;
+import com.trustus.bank.domain.account.Account;
+import com.trustus.bank.domain.account.AccountRepository;
+import com.trustus.bank.domain.customer.Customer;
+import com.trustus.bank.domain.customer.CustomerRepository;
 import com.trustus.bank.domain.user.User;
 import com.trustus.bank.domain.user.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -9,21 +15,99 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.math.BigDecimal;
+
 @Configuration
 public class DataSeeder {
 
+    public static final String DEMO_EMPLOYEE_EMAIL = "employee@trustus.bank";
+    public static final String DEMO_EMPLOYEE_PASSWORD = "employee123";
+    public static final String DEMO_CUSTOMER_PASSWORD = "customer123";
+
+    private static final BigDecimal DEMO_DAILY_LIMIT = new BigDecimal("1000.00");
+    private static final BigDecimal DEMO_ABSOLUTE_LIMIT = new BigDecimal("5000.00");
+    private static final BigDecimal DEMO_CHECKING_BALANCE = new BigDecimal("2500.00");
+    private static final BigDecimal DEMO_SAVINGS_BALANCE = new BigDecimal("5000.00");
+
     @Bean
     @Profile("!test")
-    CommandLineRunner seedDefaultEmployee(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    CommandLineRunner seedDemoData(
+            UserRepository userRepository,
+            CustomerRepository customerRepository,
+            AccountRepository accountRepository,
+            PasswordEncoder passwordEncoder
+    ) {
         return args -> {
-            if (!userRepository.existsByEmail("employee@trustus.bank")) {
-                User employee = new User(
-                        "employee@trustus.bank",
-                        passwordEncoder.encode("employee123"),
-                        RoleType.EMPLOYEE
-                );
-                userRepository.save(employee);
-            }
+            seedEmployee(userRepository, passwordEncoder);
+            seedDemoCustomer(userRepository, customerRepository, accountRepository, passwordEncoder,
+                    "Wesley", "van der Kleij", "wesley@trustus.bank", "123456789", "+31611111111",
+                    "NL11INHO0100000001", "NL11INHO0200000001");
+            seedDemoCustomer(userRepository, customerRepository, accountRepository, passwordEncoder,
+                    "Darlington", "Jones", "darlington@trustus.bank", "234567890", "+31622222222",
+                    "NL12INHO0100000002", "NL12INHO0200000002");
+            seedDemoCustomer(userRepository, customerRepository, accountRepository, passwordEncoder,
+                    "Mikotaj", "Ignatowski", "mikotaj@trustus.bank", "345678901", "+31633333333",
+                    "NL13INHO0100000003", "NL13INHO0200000003");
         };
+    }
+
+    private void seedEmployee(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        User employee = userRepository.findByEmail(DEMO_EMPLOYEE_EMAIL)
+                .orElseGet(() -> new User(DEMO_EMPLOYEE_EMAIL, "", RoleType.EMPLOYEE));
+
+        employee.setPassword(passwordEncoder.encode(DEMO_EMPLOYEE_PASSWORD));
+        employee.setRole(RoleType.EMPLOYEE);
+        employee.setEnabled(true);
+        userRepository.save(employee);
+    }
+
+    private void seedDemoCustomer(
+            UserRepository userRepository,
+            CustomerRepository customerRepository,
+            AccountRepository accountRepository,
+            PasswordEncoder passwordEncoder,
+            String firstName,
+            String lastName,
+            String email,
+            String bsn,
+            String phoneNumber,
+            String checkingIban,
+            String savingsIban
+    ) {
+        User user = userRepository.findByEmail(email)
+                .orElseGet(() -> new User(email, "", RoleType.CUSTOMER));
+
+        user.setPassword(passwordEncoder.encode(DEMO_CUSTOMER_PASSWORD));
+        user.setRole(RoleType.CUSTOMER);
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        Customer customer = customerRepository.findByEmail(email)
+                .orElseGet(() -> new Customer(user.getId(), firstName, lastName, email, bsn, phoneNumber));
+
+        customer.setFirstName(firstName);
+        customer.setLastName(lastName);
+        customer.setApproved(true);
+        customer.setDailyTransferLimit(DEMO_DAILY_LIMIT);
+        customer.setAbsoluteTransferLimit(DEMO_ABSOLUTE_LIMIT);
+        customerRepository.save(customer);
+
+        upsertAccount(accountRepository, customer.getId(), AccountType.CHECKING, checkingIban, DEMO_CHECKING_BALANCE);
+        upsertAccount(accountRepository, customer.getId(), AccountType.SAVINGS, savingsIban, DEMO_SAVINGS_BALANCE);
+    }
+
+    private void upsertAccount(
+            AccountRepository accountRepository,
+            Long customerId,
+            AccountType type,
+            String iban,
+            BigDecimal balance
+    ) {
+        Account account = accountRepository.findByCustomerIdAndType(customerId, type)
+                .orElseGet(() -> new Account(customerId, type, iban));
+
+        account.setBalance(balance);
+        account.setActive(true);
+        accountRepository.save(account);
     }
 }

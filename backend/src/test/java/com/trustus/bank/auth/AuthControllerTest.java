@@ -1,3 +1,4 @@
+/** @summary Integration tests for login and registration endpoints. */
 package com.trustus.bank.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

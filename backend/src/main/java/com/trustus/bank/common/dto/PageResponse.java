@@ -1,3 +1,4 @@
+/** @summary Generic paginated API response wrapper. */
 package com.trustus.bank.common.dto;
 
 import java.util.List;

@@ -1,3 +1,4 @@
+/** @summary Query facade for filtered transaction history and ledger views. */
 package com.trustus.bank.transfer;
 
 import com.trustus.bank.common.exception.BusinessRuleException;

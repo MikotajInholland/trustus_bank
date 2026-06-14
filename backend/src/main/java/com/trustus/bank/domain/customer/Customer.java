@@ -1,3 +1,4 @@
+/** @summary JPA entity for a bank customer profile. */
 package com.trustus.bank.domain.customer;
 
 import jakarta.persistence.Column;

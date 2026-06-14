@@ -1,3 +1,4 @@
+/** @summary Account type, IBAN, and balance for API responses. */
 package com.trustus.bank.account.dto;
 
 import com.trustus.bank.common.enums.AccountType;

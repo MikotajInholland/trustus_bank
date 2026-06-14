@@ -1,3 +1,4 @@
+/** @summary External and employee transfers with limit enforcement. */
 package com.trustus.bank.transfer;
 
 import com.trustus.bank.common.exception.BusinessRuleException;
@@ -25,6 +26,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+/**
+ * @author Mikotaj (Dev 3 — Auditor)
+ */
 @Service
 public class TransferService {
 
@@ -60,6 +64,10 @@ public class TransferService {
         Account to = accountRepository.findByIban(request.toIban())
                 .filter(Account::isActive)
                 .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
+
+        if (to.getCustomerId().equals(sender.getId())) {
+            throw new BusinessRuleException("Cannot transfer to your own account");
+        }
 
         executeTransfer(from, to, request.amount(), sender, TransactionType.EXTERNAL_TRANSFER);
     }

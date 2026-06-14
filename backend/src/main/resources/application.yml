@@ -29,6 +29,8 @@ trustus:
     secret: change-me-in-production-use-a-long-random-secret-key
     expiration-ms: 86400000
   currency: EUR
+  cors:
+    allowed-origin-patterns: http://localhost:*,http://127.0.0.1:*
   iban:
     country-code: NL
     bank-code: INHO

@@ -1,3 +1,4 @@
+/** @summary Exception for rejected business operations (HTTP 422). */
 package com.trustus.bank.common.exception;
 
 import org.springframework.http.HttpStatus;

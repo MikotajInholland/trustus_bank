@@ -1,3 +1,4 @@
+/** @summary Validated monetary amount wrapper. */
 package com.trustus.bank.common.dto;
 
 import java.math.BigDecimal;
