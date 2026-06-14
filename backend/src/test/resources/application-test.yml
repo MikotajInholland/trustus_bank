@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:trustusbank-test;DB_CLOSE_DELAY=-1
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+trustus:
+  jwt:
+    secret: test-secret-key-for-junit-tests-only-min-32-chars
+    expiration-ms: 3600000
