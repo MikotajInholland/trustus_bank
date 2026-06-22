@@ -16,6 +16,9 @@ public record PageResponse<T>(
         long totalElements,
         int totalPages
 ) {
+    /**
+     * @summary Maps a Spring Data page directly to a PageResponse.
+     */
     public static <T> PageResponse<T> from(Page<T> page) {
         return new PageResponse<>(
                 page.getContent(),
@@ -26,6 +29,13 @@ public record PageResponse<T>(
         );
     }
 
+    /**
+
+
+     * @summary Maps a Spring Data page to a PageResponse with a per-item DTO mapper.
+
+
+     */
     public static <S, T> PageResponse<T> from(Page<S> page, Function<S, T> mapper) {
         return new PageResponse<>(
                 page.getContent().stream().map(mapper).toList(),

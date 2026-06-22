@@ -1,5 +1,5 @@
 /**
- * @summary Swagger/OpenAPI metadata and JWT security scheme. 
+ * @summary Swagger/OpenAPI metadata and JWT security scheme.
  * @author Mikotaj (Dev 3 — Auditor)
  */
 package com.trustus.bank.config;
@@ -16,6 +16,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
+    /**
+     * @summary Builds the OpenAPI document with JWT bearer auth scheme.
+     */
     @Bean
     public OpenAPI trustusOpenApi() {
         final String schemeName = "bearerAuth";

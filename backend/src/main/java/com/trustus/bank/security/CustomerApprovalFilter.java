@@ -5,8 +5,8 @@
 package com.trustus.bank.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trustus.bank.domain.customer.Customer;
-import com.trustus.bank.domain.customer.CustomerRepository;
+import com.trustus.bank.entities.Customer;
+import com.trustus.bank.repositories.CustomerRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

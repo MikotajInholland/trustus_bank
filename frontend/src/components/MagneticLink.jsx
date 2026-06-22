@@ -3,7 +3,7 @@
  * @author Darlington (Dev 2 — Teller)
  */
 import { Link } from 'react-router-dom'
-import { useMagnetic } from '../hooks/useMotionFx'
+import { useMagnetic } from '../services/useMotionFx'
 
 export default function MagneticLink({ to, className = '', children, strength }) {
   const ref = useMagnetic(strength ?? 0.2, 88)

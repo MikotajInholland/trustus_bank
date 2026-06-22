@@ -12,49 +12,52 @@ const AUTHORS = {
 
 function authorForJava(relPath) {
   const p = relPath.replace(/\\/g, '/')
-  if (p.includes('/auth/')) return AUTHORS.wesley
+  const base = path.basename(p, '.java')
+
+  const wesley = new Set([
+    'AuthController', 'AuthService', 'CustomerApprovalService',
+    'User', 'Customer', 'UserRepository', 'CustomerRepository',
+    'LoginRequest', 'LoginResponse', 'RegistrationRequest', 'RegistrationResponse',
+    'ApprovalRequest', 'CustomerSummaryDto',
+  ])
+  const darlington = new Set([
+    'AccountController', 'AccountService', 'Account', 'AccountRepository',
+    'AccountDto', 'AtmTransactionRequest', 'CustomerDashboardDto',
+    'CustomerDirectoryEntryDto', 'InternalTransferRequest',
+  ])
+  const mikotaj = new Set([
+    'TransferController', 'HealthController', 'TransferService', 'TransactionService', 'LimitService',
+    'Transaction', 'TransactionRepository',
+    'CustomerLimitsDto', 'ExternalTransferRequest', 'TransactionDto', 'UpdateLimitsRequest',
+  ])
+
   if (p.includes('/security/')) return AUTHORS.wesley
-  if (p.includes('/account/')) return AUTHORS.darlington
-  if (p.includes('/transfer/')) return AUTHORS.mikotaj
+  if (wesley.has(base)) return AUTHORS.wesley
+  if (darlington.has(base)) return AUTHORS.darlington
+  if (mikotaj.has(base)) return AUTHORS.mikotaj
   if (p.includes('/config/')) return AUTHORS.mikotaj
   if (p.includes('/common/')) return AUTHORS.mikotaj
-  if (p.includes('/domain/user/')) return AUTHORS.wesley
-  if (p.includes('/domain/customer/')) return AUTHORS.wesley
-  if (p.includes('/domain/account/')) return AUTHORS.darlington
-  if (p.includes('/domain/transaction/')) return AUTHORS.mikotaj
   if (p.endsWith('TrustusBankApplication.java')) return AUTHORS.mikotaj
-  if (p.includes('/test/') && p.includes('/auth/')) return AUTHORS.wesley
-  if (p.includes('/test/') && p.includes('/transfer/')) return AUTHORS.mikotaj
+  if (p.includes('/test/') && base === 'AuthControllerTest') return AUTHORS.wesley
+  if (p.includes('/test/') && base === 'LimitServiceTest') return AUTHORS.mikotaj
   if (p.includes('/test/')) return AUTHORS.mikotaj
   return AUTHORS.shared
 }
 
-const frontendAuthors = {
-  'frontend/src/pages/auth/LoginPage.jsx': AUTHORS.wesley,
-  'frontend/src/pages/auth/RegisterPage.jsx': AUTHORS.wesley,
-  'frontend/src/pages/auth/WaitingPage.jsx': AUTHORS.wesley,
-  'frontend/src/pages/account/DashboardPage.jsx': AUTHORS.darlington,
-  'frontend/src/pages/account/AtmLoginPage.jsx': AUTHORS.darlington,
-  'frontend/src/pages/account/AtmPage.jsx': AUTHORS.darlington,
-  'frontend/src/pages/account/InternalTransfersPage.jsx': AUTHORS.darlington,
-  'frontend/src/pages/transfer/TransfersPage.jsx': AUTHORS.mikotaj,
-  'frontend/src/pages/transfer/TransactionsPage.jsx': AUTHORS.mikotaj,
-  'frontend/src/pages/employee/ApprovalQueuePage.jsx': AUTHORS.wesley,
-  'frontend/src/pages/employee/AccountClosurePage.jsx': AUTHORS.wesley,
-  'frontend/src/pages/employee/EmployeeCustomersPage.jsx': AUTHORS.darlington,
-  'frontend/src/pages/employee/EmployeeTransferPage.jsx': AUTHORS.mikotaj,
-  'frontend/src/pages/employee/EmployeeTransactionHistoryPage.jsx': AUTHORS.mikotaj,
-  'frontend/src/pages/employee/GlobalLedgerPage.jsx': AUTHORS.mikotaj,
-  'frontend/src/pages/employee/LimitManagementPage.jsx': AUTHORS.mikotaj,
-  'frontend/src/components/TransactionTable.jsx': AUTHORS.mikotaj,
-  'frontend/src/components/TransactionFilters.jsx': AUTHORS.mikotaj,
-  'frontend/src/context/AuthContext.jsx': AUTHORS.wesley,
-  'frontend/src/api/client.js': AUTHORS.wesley,
-}
-
 function authorForFrontend(relPath) {
-  const key = relPath.replace(/\\/g, '/')
-  return frontendAuthors[key] ?? AUTHORS.shared
+  const p = relPath.replace(/\\/g, '/')
+  if (p.startsWith('frontend/src/views/auth/')) return AUTHORS.wesley
+  if (p.includes('/views/employee/ApprovalQueuePage')) return AUTHORS.wesley
+  if (p.includes('/views/employee/AccountClosurePage')) return AUTHORS.wesley
+  if (p.startsWith('frontend/src/views/account/')) return AUTHORS.darlington
+  if (p.includes('/views/employee/EmployeeCustomersPage')) return AUTHORS.darlington
+  if (p.startsWith('frontend/src/views/transfer/')) return AUTHORS.mikotaj
+  if (p.includes('/views/employee/EmployeeTransferPage')) return AUTHORS.mikotaj
+  if (p.includes('/views/employee/EmployeeTransactionHistoryPage')) return AUTHORS.mikotaj
+  if (p.includes('/views/employee/GlobalLedgerPage')) return AUTHORS.mikotaj
+  if (p.includes('/views/employee/LimitManagementPage')) return AUTHORS.mikotaj
+  if (p === 'frontend/src/services/client.js') return AUTHORS.wesley
+  return AUTHORS.shared
 }
 
 function walk(dir, ext, files = []) {
@@ -153,21 +156,6 @@ for (const file of walk(path.join(root, 'frontend/src'), '.jsx').concat(walk(pat
   const author = authorForFrontend(rel)
   const original = fs.readFileSync(file, 'utf8')
   const next = upsertFrontendAuthor(original, author)
-  if (next !== original) {
-    fs.writeFileSync(file, next)
-    updated++
-  }
-}
-
-for (const pkg of [
-  'backend/src/main/java/com/trustus/bank/auth/package-info.java',
-  'backend/src/main/java/com/trustus/bank/account/package-info.java',
-  'backend/src/main/java/com/trustus/bank/transfer/package-info.java',
-]) {
-  const file = path.join(root, pkg)
-  const author = authorForJava(pkg)
-  const original = fs.readFileSync(file, 'utf8')
-  const next = upsertPackageInfoAuthor(original, author)
   if (next !== original) {
     fs.writeFileSync(file, next)
     updated++

@@ -1,5 +1,5 @@
 /**
- * @summary Maps exceptions to consistent JSON error responses. 
+ * @summary Maps exceptions to consistent JSON error responses.
  * @author Mikotaj (Dev 3 — Auditor)
  */
 package com.trustus.bank.common.exception;
@@ -22,6 +22,9 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /**
+     * @summary Handles business rule violations and missing resources.
+     */
     @ExceptionHandler({ResourceNotFoundException.class, BusinessRuleException.class})
     public ResponseEntity<Map<String, Object>> handleApiException(RuntimeException ex) {
         HttpStatus status = ex instanceof ResourceNotFoundException notFound
@@ -30,6 +33,9 @@ public class GlobalExceptionHandler {
         return buildResponse(status, ex.getMessage(), null);
     }
 
+    /**
+     * @summary Handles request body validation failures from Jakarta Bean Validation.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
@@ -39,12 +45,18 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Validation failed", fieldErrors);
     }
 
+    /**
+     * @summary Handles unexpected exceptions with a generic 500 response.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {
         log.error("Unhandled exception", ex);
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", null);
     }
 
+    /**
+     * @summary Builds a consistent JSON error body with timestamp, status, and message.
+     */
     private ResponseEntity<Map<String, Object>> buildResponse(
             HttpStatus status,
             String message,

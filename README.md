@@ -4,15 +4,40 @@ Full-stack student banking application. All monetary values use **EUR**. Persist
 
 ## Team
 
-| Developer | Role | Theme | Backend package | Frontend folder |
-|-----------|------|-------|-----------------|-----------------|
-| **Wesley** | Dev 1 | Gatekeeper | `backend/.../auth`, `backend/.../security` | `frontend/src/pages/auth`, `employee/ApprovalQueuePage`, `employee/AccountClosurePage` |
-| **Darlington** | Dev 2 | Teller | `backend/.../account` | `frontend/src/pages/account`, `employee/EmployeeCustomersPage` |
-| **Mikotaj** | Dev 3 | Auditor | `backend/.../transfer` | `frontend/src/pages/transfer`, `employee/GlobalLedgerPage`, `employee/LimitManagementPage`, CI/deploy |
+Each developer owns a **feature area**; code is organized in **flat MVC layers** (not per-developer folders).
 
-Ownership is documented in code comments on each page and in package-level notes — not shown as badges in the UI.
+| Developer | Role | Theme | Backend (by class) | Frontend (by view folder) |
+|-----------|------|-------|--------------------|---------------------------|
+| **Wesley** | Dev 1 | Gatekeeper | `AuthController`, `AuthService`, `CustomerApprovalService`, `User`, `Customer`, auth DTOs + `security/` | `views/auth/`, approval & closure employee pages |
+| **Darlington** | Dev 2 | Teller | `AccountController`, `AccountService`, `Account`, account DTOs | `views/account/`, `EmployeeCustomersPage` |
+| **Mikotaj** | Dev 3 | Auditor | `TransferController`, `HealthController`, transfer services, `Transaction`, transfer DTOs + `config/` | `views/transfer/`, ledger/limits/transfers employee pages |
 
-Shared entities live under `backend/src/main/java/com/trustus/bank/domain/`.
+Shared infrastructure: `common/` (exceptions, enums, pagination), `components/`, `services/`, `constants/` on the frontend.
+
+### Backend layout (flat MVC)
+
+```
+com/trustus/bank/
+  controllers/     AuthController, AccountController, TransferController, HealthController
+  services/        AuthService, CustomerApprovalService, AccountService, TransferService, …
+  repositories/    UserRepository, CustomerRepository, AccountRepository, TransactionRepository
+  entities/          User, Customer, Account, Transaction
+  dto/               all request/response DTOs
+  config/            Mikotaj
+  security/          Wesley
+  common/            shared
+```
+
+### Frontend layout (flat MVC)
+
+```
+frontend/src/
+  views/             auth/, account/, transfer/, employee/ (pages)
+  components/        shared UI (Layout, tables, cards, …)
+  services/          API client, AuthContext, hooks
+  constants/
+  App.jsx            routes
+```
 
 ## Quick start
 

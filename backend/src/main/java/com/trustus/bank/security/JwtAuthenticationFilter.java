@@ -4,8 +4,8 @@
  */
 package com.trustus.bank.security;
 
-import com.trustus.bank.domain.user.User;
-import com.trustus.bank.domain.user.UserRepository;
+import com.trustus.bank.entities.User;
+import com.trustus.bank.repositories.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

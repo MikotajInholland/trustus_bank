@@ -1,17 +1,17 @@
 /**
- * @summary Seeds demo employee and customer accounts on startup. 
+ * @summary Seeds demo employee and customer accounts on startup.
  * @author Mikotaj (Dev 3 — Auditor)
  */
 package com.trustus.bank.config;
 
 import com.trustus.bank.common.enums.AccountType;
 import com.trustus.bank.common.enums.RoleType;
-import com.trustus.bank.domain.account.Account;
-import com.trustus.bank.domain.account.AccountRepository;
-import com.trustus.bank.domain.customer.Customer;
-import com.trustus.bank.domain.customer.CustomerRepository;
-import com.trustus.bank.domain.user.User;
-import com.trustus.bank.domain.user.UserRepository;
+import com.trustus.bank.entities.Account;
+import com.trustus.bank.repositories.AccountRepository;
+import com.trustus.bank.entities.Customer;
+import com.trustus.bank.repositories.CustomerRepository;
+import com.trustus.bank.entities.User;
+import com.trustus.bank.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +32,9 @@ public class DataSeeder {
     private static final BigDecimal DEMO_CHECKING_BALANCE = new BigDecimal("2500.00");
     private static final BigDecimal DEMO_SAVINGS_BALANCE = new BigDecimal("5000.00");
 
+    /**
+     * @summary Seeds demo users, customers, accounts, and transfer limits on startup.
+     */
     @Bean
     @Profile("!test")
     CommandLineRunner seedDemoData(
@@ -54,6 +57,9 @@ public class DataSeeder {
         };
     }
 
+    /**
+     * @summary Creates or updates the demo employee account.
+     */
     private void seedEmployee(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         User employee = userRepository.findByEmail(DEMO_EMPLOYEE_EMAIL)
                 .orElseGet(() -> new User(DEMO_EMPLOYEE_EMAIL, "", RoleType.EMPLOYEE));
@@ -64,6 +70,9 @@ public class DataSeeder {
         userRepository.save(employee);
     }
 
+    /**
+     * @summary Creates or updates a demo customer with checking and savings accounts.
+     */
     private void seedDemoCustomer(
             UserRepository userRepository,
             CustomerRepository customerRepository,
@@ -99,6 +108,9 @@ public class DataSeeder {
         upsertAccount(accountRepository, customer.getId(), AccountType.SAVINGS, savingsIban, DEMO_SAVINGS_BALANCE);
     }
 
+    /**
+     * @summary Creates or updates a single account with the given IBAN and balance.
+     */
     private void upsertAccount(
             AccountRepository accountRepository,
             Long customerId,

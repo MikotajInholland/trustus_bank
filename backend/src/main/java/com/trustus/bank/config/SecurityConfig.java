@@ -24,6 +24,9 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomerApprovalFilter customerApprovalFilter;
 
+    /**
+     * @summary Injects JWT and customer-approval security filters.
+     */
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
             CustomerApprovalFilter customerApprovalFilter
@@ -32,6 +35,9 @@ public class SecurityConfig {
         this.customerApprovalFilter = customerApprovalFilter;
     }
 
+    /**
+     * @summary Configures stateless JWT auth and role-based API access rules.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

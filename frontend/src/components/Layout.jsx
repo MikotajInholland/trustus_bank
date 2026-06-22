@@ -3,7 +3,7 @@
  * @author Wesley, Darlington, Mikotaj (shared)
  */
 import { Link, Navigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../services/AuthContext'
 import AmbientField from './AmbientField'
 import AnimatedOutlet from './AnimatedOutlet'
 

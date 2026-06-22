@@ -3,7 +3,7 @@
  * @author Darlington (Dev 2 — Teller)
  */
 import GlowBorder from './GlowBorder'
-import { useCardTilt } from '../hooks/useMotionFx'
+import { useCardTilt } from '../services/useMotionFx'
 
 function formatIban(iban) {
   return iban.replace(/(.{4})/g, '$1 ').trim()
