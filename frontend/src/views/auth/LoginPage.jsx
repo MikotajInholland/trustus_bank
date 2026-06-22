@@ -116,10 +116,7 @@ export default function LoginPage() {
           )}
         </div>
 
-        <p className="mt-3 mb-0 small text-muted">
-          Customers use password <code>customer123</code>, employee uses <code>employee123</code>
-        </p>
-        <p className="mt-2 mb-0 small">
+        <p className="mt-3 mb-0 small">
           No account? <Link to="/register">Register</Link>
         </p>
       </GlassCard>
