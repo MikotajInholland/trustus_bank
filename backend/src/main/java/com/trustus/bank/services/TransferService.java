@@ -166,15 +166,18 @@ public class TransferService {
             return PageResponse.from(Page.empty(pageable));
         }
 
-        Long ibanAccountId = null;
+        List<Long> ibanAccountIds = null;
         if (iban != null && !iban.isBlank()) {
-            ibanAccountId = accountRepository.findByIban(iban)
+            ibanAccountIds = accountRepository.findByIbanStartingWithIgnoreCase(iban.trim()).stream()
                     .map(Account::getId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Account not found for IBAN"));
+                    .toList();
+            if (ibanAccountIds.isEmpty()) {
+                return PageResponse.from(Page.empty(pageable));
+            }
         }
 
         Page<Transaction> page = transactionRepository.findFiltered(
-                accountIds, startDate, endDate, minAmount, maxAmount, exactAmount, ibanAccountId, pageable
+                accountIds, startDate, endDate, minAmount, maxAmount, exactAmount, ibanAccountIds, pageable
         );
         return PageResponse.from(page, this::toDto);
     }

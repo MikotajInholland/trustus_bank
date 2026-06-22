@@ -4,6 +4,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 import api from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import PageHeader from '../../components/PageHeader'
 import Pagination from '../../components/Pagination'
 import TransactionFilters, { buildTransactionParams } from '../../components/TransactionFilters'
@@ -19,39 +20,33 @@ const EMPTY_FILTERS = {
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([])
   const [filters, setFilters] = useState(EMPTY_FILTERS)
-  const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS)
+  const debouncedFilters = useDebouncedValue(filters)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+
+  useEffect(() => { setPage(0) }, [debouncedFilters])
 
   /**
    * @summary Fetches paginated transactions from the customer history API.
    */
   const load = useCallback(() => {
-    const params = buildTransactionParams(appliedFilters, page, 20)
+    const params = buildTransactionParams(debouncedFilters, page, 20)
     api.get('/customer/transactions', { params })
       .then(({ data }) => {
         setTransactions(data.content || [])
         setTotalPages(data.totalPages || 0)
       })
       .catch(() => setTransactions([]))
-  }, [appliedFilters, page])
+  }, [debouncedFilters, page])
 
   useEffect(() => { load() }, [load])
-
-  /**
-   * @summary Applies the current filter form and resets to page zero.
-   */
-  function applyFilters() {
-    setPage(0)
-    setAppliedFilters({ ...filters })
-  }
 
   return (
     <div>
       <PageHeader
         title="Transaction History"
         subtitle="Filter by date, amount, or IBAN."
-      />      <TransactionFilters filters={filters} onChange={setFilters} onApply={applyFilters} />
+      />      <TransactionFilters filters={filters} onChange={setFilters} />
       <TransactionTable transactions={transactions} />
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>

@@ -19,6 +19,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Optional<Account> findByIban(String iban);
 
+    List<Account> findByIbanStartingWithIgnoreCase(String ibanPrefix);
+
     Optional<Account> findByCustomerIdAndType(Long customerId, AccountType type);
 
     boolean existsByIban(String iban);

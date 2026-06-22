@@ -5,7 +5,7 @@
 /**
  * @summary Renders date, amount, and IBAN filters for transaction history.
  */
-export default function TransactionFilters({ filters, onChange, onApply }) {
+export default function TransactionFilters({ filters, onChange }) {
   return (
     <div className="glass-card glass-card-padded mb-3">
       <h2 className="h6 mb-3" style={{ color: 'var(--text-secondary)' }}>Filters</h2>
@@ -66,9 +66,6 @@ export default function TransactionFilters({ filters, onChange, onApply }) {
             value={filters.iban}
             onChange={(e) => onChange({ ...filters, iban: e.target.value })}
           />
-        </div>
-        <div className="col-md-2 d-flex align-items-end">
-          <button className="btn btn-brand btn-sm w-100" onClick={onApply}>Apply</button>
         </div>
         <div className="col-md-2 d-flex align-items-end">
           <button

@@ -2,24 +2,39 @@
  * @summary Employee tool to close customer accounts.
  * @author Wesley (Dev 1 — Gatekeeper)
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 
 export default function AccountClosurePage() {
   const [query, setQuery] = useState('')
+  const debouncedQuery = useDebouncedValue(query)
   const [results, setResults] = useState([])
   const [selected, setSelected] = useState(null)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  async function searchCustomers() {
-    if (!query.trim()) return
-    const { data } = await api.get('/directory/customers', { params: { query } })
-    setResults(data)
-    setSelected(null)
-  }
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setResults([])
+      setSelected(null)
+      return undefined
+    }
+
+    let cancelled = false
+    api.get('/directory/customers', { params: { query: debouncedQuery } })
+      .then(({ data }) => {
+        if (!cancelled) {
+          setResults(data)
+          setSelected(null)
+        }
+      })
+      .catch(() => { if (!cancelled) setResults([]) })
+
+    return () => { cancelled = true }
+  }, [debouncedQuery])
 
   async function closeAccount() {
     if (!selected) return
@@ -44,16 +59,12 @@ export default function AccountClosurePage() {
       />      {message && <div className="alert alert-success">{message}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="input-group mb-3">
-        <input
-          className="form-control"
-          placeholder="Search customer by name..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && searchCustomers()}
-        />
-        <button className="btn btn-brand" onClick={searchCustomers}>Search</button>
-      </div>
+      <input
+        className="form-control mb-3"
+        placeholder="Search customer by name..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
 
       <div className="list-group glass-card mb-3">
         {results.map((customer) => (

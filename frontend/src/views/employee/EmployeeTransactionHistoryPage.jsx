@@ -5,6 +5,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import PageHeader from '../../components/PageHeader'
 import Pagination from '../../components/Pagination'
 import TransactionFilters, { buildTransactionParams } from '../../components/TransactionFilters'
@@ -21,22 +22,24 @@ export default function EmployeeTransactionHistoryPage() {
   const { customerId } = useParams()
   const [transactions, setTransactions] = useState([])
   const [filters, setFilters] = useState(EMPTY_FILTERS)
-  const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS)
+  const debouncedFilters = useDebouncedValue(filters)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+
+  useEffect(() => { setPage(0) }, [debouncedFilters])
 
   /**
    * @summary Fetches paginated transactions for the customer from the employee API.
    */
   const load = useCallback(() => {
-    const params = buildTransactionParams(appliedFilters, page, 20)
+    const params = buildTransactionParams(debouncedFilters, page, 20)
     api.get(`/employee/customers/${customerId}/transactions`, { params })
       .then(({ data }) => {
         setTransactions(data.content || [])
         setTotalPages(data.totalPages || 0)
       })
       .catch(() => setTransactions([]))
-  }, [customerId, appliedFilters, page])
+  }, [customerId, debouncedFilters, page])
 
   useEffect(() => { load() }, [load])
 
@@ -45,7 +48,7 @@ export default function EmployeeTransactionHistoryPage() {
       <PageHeader
         title="Customer Transaction History"
         subtitle={`Transactions for customer #${customerId}.`}
-      />      <TransactionFilters filters={filters} onChange={setFilters} onApply={() => { setPage(0); setAppliedFilters({ ...filters }) }} />
+      />      <TransactionFilters filters={filters} onChange={setFilters} />
       <TransactionTable transactions={transactions} />
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>

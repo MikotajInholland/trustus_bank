@@ -5,25 +5,29 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import PageHeader from '../../components/PageHeader'
 import Pagination from '../../components/Pagination'
 
 export default function EmployeeCustomersPage() {
   const [customers, setCustomers] = useState([])
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [totalElements, setTotalElements] = useState(0)
 
   const load = useCallback(() => {
-    api.get('/employee/customers', { params: { search: search || undefined, page, size: 15 } })
+    api.get('/employee/customers', { params: { search: debouncedSearch || undefined, page, size: 15 } })
       .then(({ data }) => {
         setCustomers(data.content || [])
         setTotalPages(data.totalPages || 0)
         setTotalElements(data.totalElements || 0)
       })
       .catch(() => setCustomers([]))
-  }, [search, page])
+  }, [debouncedSearch, page])
+
+  useEffect(() => { setPage(0) }, [debouncedSearch])
 
   useEffect(() => { load() }, [load])
 
@@ -33,15 +37,12 @@ export default function EmployeeCustomersPage() {
         title="Active customers"
         subtitle="Search and browse approved customers."
       />
-      <div className="input-group mb-3">
-        <input
-          className="form-control"
-          placeholder="Search customers..."
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(0) }}
-        />
-        <button className="btn btn-brand" onClick={load}>Search</button>
-      </div>
+      <input
+        className="form-control mb-3"
+        placeholder="Search customers..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
       <p className="text-muted small">{totalElements} active customer(s)</p>
 

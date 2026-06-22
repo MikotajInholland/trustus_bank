@@ -2,8 +2,9 @@
  * @summary View and update customer transfer limits.
  * @author Mikotaj (Dev 3 — Auditor)
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import PageHeader from '../../components/PageHeader'
 
 /**
@@ -11,18 +12,25 @@ import PageHeader from '../../components/PageHeader'
  */
 export default function LimitManagementPage() {
   const [query, setQuery] = useState('')
+  const debouncedQuery = useDebouncedValue(query)
   const [results, setResults] = useState([])
   const [selected, setSelected] = useState(null)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  /**
-   * @summary Searches the customer directory by name.
-   */
-  async function searchCustomers() {
-    const { data } = await api.get('/directory/customers', { params: { query } })
-    setResults(data)
-  }
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setResults([])
+      return undefined
+    }
+
+    let cancelled = false
+    api.get('/directory/customers', { params: { query: debouncedQuery } })
+      .then(({ data }) => { if (!cancelled) setResults(data) })
+      .catch(() => { if (!cancelled) setResults([]) })
+
+    return () => { cancelled = true }
+  }, [debouncedQuery])
 
   /**
    * @summary Loads daily and absolute limits for the selected customer.
@@ -58,16 +66,12 @@ export default function LimitManagementPage() {
       />      {message && <div className="alert alert-success">{message}</div>}
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="input-group">
-        <input
-          className="form-control"
-          placeholder="Search customer by name..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && searchCustomers()}
-        />
-        <button className="btn btn-outline-primary" onClick={searchCustomers}>Search</button>
-      </div>
+      <input
+        className="form-control"
+        placeholder="Search customer by name..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
 
       <div className="list-group">
         {results.map((customer) => (

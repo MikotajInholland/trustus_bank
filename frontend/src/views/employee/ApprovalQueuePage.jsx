@@ -4,6 +4,7 @@
  */
 import { useCallback, useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 import Pagination from '../../components/Pagination'
@@ -11,19 +12,22 @@ import Pagination from '../../components/Pagination'
 export default function ApprovalQueuePage() {
   const [customers, setCustomers] = useState([])
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebouncedValue(search)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [limits, setLimits] = useState({ dailyTransferLimit: 1000, absoluteTransferLimit: 5000 })
   const [error, setError] = useState('')
 
   const load = useCallback(() => {
-    api.get('/employee/approvals', { params: { search: search || undefined, page, size: 10 } })
+    api.get('/employee/approvals', { params: { search: debouncedSearch || undefined, page, size: 10 } })
       .then(({ data }) => {
         setCustomers(data.content || [])
         setTotalPages(data.totalPages || 0)
       })
       .catch(() => setCustomers([]))
-  }, [search, page])
+  }, [debouncedSearch, page])
+
+  useEffect(() => { setPage(0) }, [debouncedSearch])
 
   useEffect(() => { load() }, [load])
 
@@ -70,15 +74,12 @@ export default function ApprovalQueuePage() {
         </div>
       </GlassCard>
 
-      <div className="input-group mb-3">
-        <input
-          className="form-control"
+      <input
+          className="form-control mb-3"
           placeholder="Search by name or email..."
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(0) }}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="btn btn-brand" onClick={load}>Search</button>
-      </div>
 
       <div className="list-group glass-card mb-0">
         {customers.length === 0 && (

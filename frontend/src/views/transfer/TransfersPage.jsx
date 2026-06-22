@@ -2,8 +2,9 @@
  * @summary Send external transfers from checking.
  * @author Mikotaj (Dev 3 — Auditor)
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 
@@ -13,18 +14,24 @@ import PageHeader from '../../components/PageHeader'
 export default function TransfersPage() {
   const [form, setForm] = useState({ toIban: '', amount: '' })
   const [directoryQuery, setDirectoryQuery] = useState('')
+  const debouncedQuery = useDebouncedValue(directoryQuery)
   const [directoryResults, setDirectoryResults] = useState([])
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  /**
-   * @summary Searches the customer directory for a transfer recipient by name.
-   */
-  async function searchDirectory() {
-    if (!directoryQuery.trim()) return
-    const { data } = await api.get('/directory/customers', { params: { query: directoryQuery } })
-    setDirectoryResults(data)
-  }
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setDirectoryResults([])
+      return undefined
+    }
+
+    let cancelled = false
+    api.get('/directory/customers', { params: { query: debouncedQuery } })
+      .then(({ data }) => { if (!cancelled) setDirectoryResults(data) })
+      .catch(() => { if (!cancelled) setDirectoryResults([]) })
+
+    return () => { cancelled = true }
+  }, [debouncedQuery])
 
   /**
    * @summary Fills the destination IBAN from a directory search result.
@@ -61,16 +68,13 @@ export default function TransfersPage() {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <GlassCard className="mb-3">
-        <h2 className="h6 mb-3">Find recipient</h2>        <div className="input-group mb-2">
-          <input
-            className="form-control"
-            placeholder="Search by name..."
-            value={directoryQuery}
-            onChange={(e) => setDirectoryQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), searchDirectory())}
-          />
-          <button type="button" className="btn btn-outline-secondary" onClick={searchDirectory}>Search</button>
-        </div>
+        <h2 className="h6 mb-3">Find recipient</h2>
+        <input
+          className="form-control mb-2"
+          placeholder="Search by name..."
+          value={directoryQuery}
+          onChange={(e) => setDirectoryQuery(e.target.value)}
+        />
         {directoryResults.length > 0 && (
           <div className="list-group">
             {directoryResults.map((entry) => (

@@ -45,7 +45,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
               AND (:minAmount IS NULL OR t.amount >= :minAmount)
               AND (:maxAmount IS NULL OR t.amount <= :maxAmount)
               AND (:exactAmount IS NULL OR t.amount = :exactAmount)
-              AND (:ibanAccountId IS NULL OR t.fromAccountId = :ibanAccountId OR t.toAccountId = :ibanAccountId)
+              AND (:ibanAccountIds IS NULL OR t.fromAccountId IN :ibanAccountIds OR t.toAccountId IN :ibanAccountIds)
             ORDER BY t.timestamp DESC
             """)
     Page<Transaction> findFiltered(
@@ -55,7 +55,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("minAmount") BigDecimal minAmount,
             @Param("maxAmount") BigDecimal maxAmount,
             @Param("exactAmount") BigDecimal exactAmount,
-            @Param("ibanAccountId") Long ibanAccountId,
+            @Param("ibanAccountIds") List<Long> ibanAccountIds,
             Pageable pageable
     );
 

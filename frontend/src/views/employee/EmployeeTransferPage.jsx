@@ -2,8 +2,9 @@
  * @summary Employee-initiated external transfers.
  * @author Mikotaj (Dev 3 — Auditor)
  */
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
+import useDebouncedValue from '../../services/useDebouncedValue'
 import PageHeader from '../../components/PageHeader'
 
 /**
@@ -11,29 +12,43 @@ import PageHeader from '../../components/PageHeader'
  */
 export default function EmployeeTransferPage() {
   const [query, setQuery] = useState('')
+  const debouncedQuery = useDebouncedValue(query)
   const [customers, setCustomers] = useState([])
   const [selected, setSelected] = useState(null)
   const [form, setForm] = useState({ toIban: '', amount: '' })
   const [recipientQuery, setRecipientQuery] = useState('')
+  const debouncedRecipientQuery = useDebouncedValue(recipientQuery)
   const [recipients, setRecipients] = useState([])
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
-  /**
-   * @summary Searches the directory for the sending customer (Customer A).
-   */
-  async function searchCustomers() {
-    const { data } = await api.get('/directory/customers', { params: { query } })
-    setCustomers(data)
-  }
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setCustomers([])
+      return undefined
+    }
 
-  /**
-   * @summary Searches the directory for the receiving customer (Customer B).
-   */
-  async function searchRecipients() {
-    const { data } = await api.get('/directory/customers', { params: { query: recipientQuery } })
-    setRecipients(data)
-  }
+    let cancelled = false
+    api.get('/directory/customers', { params: { query: debouncedQuery } })
+      .then(({ data }) => { if (!cancelled) setCustomers(data) })
+      .catch(() => { if (!cancelled) setCustomers([]) })
+
+    return () => { cancelled = true }
+  }, [debouncedQuery])
+
+  useEffect(() => {
+    if (!debouncedRecipientQuery.trim()) {
+      setRecipients([])
+      return undefined
+    }
+
+    let cancelled = false
+    api.get('/directory/customers', { params: { query: debouncedRecipientQuery } })
+      .then(({ data }) => { if (!cancelled) setRecipients(data) })
+      .catch(() => { if (!cancelled) setRecipients([]) })
+
+    return () => { cancelled = true }
+  }, [debouncedRecipientQuery])
 
   /**
    * @summary Executes an employee transfer via the backend API.
@@ -66,10 +81,12 @@ export default function EmployeeTransferPage() {
       <div className="card shadow-sm mb-3">
         <div className="card-body">
           <h2 className="h6">1. Select sender (Customer A)</h2>
-          <div className="input-group mb-2">
-            <input className="form-control" placeholder="Search by name..." value={query} onChange={(e) => setQuery(e.target.value)} />
-            <button type="button" className="btn btn-outline-primary" onClick={searchCustomers}>Search</button>
-          </div>
+          <input
+            className="form-control mb-2"
+            placeholder="Search by name..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
           <div className="list-group">
             {customers.map((c) => (
               <button
@@ -89,15 +106,12 @@ export default function EmployeeTransferPage() {
         <div className="card shadow-sm">
           <div className="card-body">
             <h2 className="h6">2. Transfer from {selected.firstName} {selected.lastName}</h2>
-            <div className="input-group mb-3">
-              <input
-                className="form-control"
-                placeholder="Find recipient by name..."
-                value={recipientQuery}
-                onChange={(e) => setRecipientQuery(e.target.value)}
-              />
-              <button type="button" className="btn btn-outline-secondary" onClick={searchRecipients}>Search</button>
-            </div>
+            <input
+              className="form-control mb-3"
+              placeholder="Find recipient by name..."
+              value={recipientQuery}
+              onChange={(e) => setRecipientQuery(e.target.value)}
+            />
             {recipients.length > 0 && (
               <div className="list-group mb-3">
                 {recipients.map((r) => (
