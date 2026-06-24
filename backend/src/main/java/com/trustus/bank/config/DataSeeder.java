@@ -1,15 +1,16 @@
-/**
- * @summary Seeds demo employee and customer accounts on startup.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Seeds demo employee and customer accounts on startup.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.config;
 
 import com.trustus.bank.common.enums.AccountType;
 import com.trustus.bank.common.enums.RoleType;
+import com.trustus.bank.common.enums.TransactionType;
 import com.trustus.bank.entities.Account;
 import com.trustus.bank.repositories.AccountRepository;
 import com.trustus.bank.entities.Customer;
 import com.trustus.bank.repositories.CustomerRepository;
+import com.trustus.bank.entities.Transaction;
+import com.trustus.bank.repositories.TransactionRepository;
 import com.trustus.bank.entities.User;
 import com.trustus.bank.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -19,6 +20,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class DataSeeder {
@@ -31,16 +36,16 @@ public class DataSeeder {
     private static final BigDecimal DEMO_ABSOLUTE_LIMIT = new BigDecimal("5000.00");
     private static final BigDecimal DEMO_CHECKING_BALANCE = new BigDecimal("2500.00");
     private static final BigDecimal DEMO_SAVINGS_BALANCE = new BigDecimal("5000.00");
+    private static final int DEMO_TRANSACTIONS_PER_CUSTOMER = 25;
 
-    /**
-     * @summary Seeds demo users, customers, accounts, and transfer limits on startup.
-     */
+    // Seeds demo users, customers, accounts, and transfer limits on startup.
     @Bean
     @Profile("!test")
     CommandLineRunner seedDemoData(
             UserRepository userRepository,
             CustomerRepository customerRepository,
             AccountRepository accountRepository,
+            TransactionRepository transactionRepository,
             PasswordEncoder passwordEncoder
     ) {
         return args -> {
@@ -54,12 +59,11 @@ public class DataSeeder {
             seedDemoCustomer(userRepository, customerRepository, accountRepository, passwordEncoder,
                     "Mikotaj", "Ignatowski", "mikotaj@trustus.bank", "345678901", "+31633333333",
                     "NL13INHO0100000003", "NL13INHO0200000003");
+            seedDemoTransactions(customerRepository, accountRepository, transactionRepository);
         };
     }
 
-    /**
-     * @summary Creates or updates the demo employee account.
-     */
+    // Creates or updates the demo employee account.
     private void seedEmployee(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         User employee = userRepository.findByEmail(DEMO_EMPLOYEE_EMAIL)
                 .orElseGet(() -> new User(DEMO_EMPLOYEE_EMAIL, "", RoleType.EMPLOYEE));
@@ -70,9 +74,7 @@ public class DataSeeder {
         userRepository.save(employee);
     }
 
-    /**
-     * @summary Creates or updates a demo customer with checking and savings accounts.
-     */
+    // Creates or updates a demo customer with checking and savings accounts.
     private void seedDemoCustomer(
             UserRepository userRepository,
             CustomerRepository customerRepository,
@@ -108,9 +110,7 @@ public class DataSeeder {
         upsertAccount(accountRepository, customer.getId(), AccountType.SAVINGS, savingsIban, DEMO_SAVINGS_BALANCE);
     }
 
-    /**
-     * @summary Creates or updates a single account with the given IBAN and balance.
-     */
+    // Creates or updates a single account with the given IBAN and balance.
     private void upsertAccount(
             AccountRepository accountRepository,
             Long customerId,
@@ -124,5 +124,90 @@ public class DataSeeder {
         account.setBalance(balance);
         account.setActive(true);
         accountRepository.save(account);
+    }
+
+    // Seeds demo ledger entries so transaction history pagination can be tested immediately.
+    private void seedDemoTransactions(
+            CustomerRepository customerRepository,
+            AccountRepository accountRepository,
+            TransactionRepository transactionRepository
+    ) {
+        if (transactionRepository.count() > 0) {
+            return;
+        }
+
+        List<CustomerAccounts> customers = List.of(
+                loadCustomerAccounts(customerRepository, accountRepository, "wesley@trustus.bank"),
+                loadCustomerAccounts(customerRepository, accountRepository, "darlington@trustus.bank"),
+                loadCustomerAccounts(customerRepository, accountRepository, "mikotaj@trustus.bank")
+        );
+
+        List<Transaction> transactions = new ArrayList<>();
+        for (int customerIndex = 0; customerIndex < customers.size(); customerIndex++) {
+            CustomerAccounts current = customers.get(customerIndex);
+            Account recipientChecking = customers.get((customerIndex + 1) % customers.size()).checking();
+
+            for (int i = 0; i < DEMO_TRANSACTIONS_PER_CUSTOMER; i++) {
+                transactions.add(buildDemoTransaction(current, recipientChecking, customerIndex, i));
+            }
+        }
+
+        transactionRepository.saveAll(transactions);
+    }
+
+    private CustomerAccounts loadCustomerAccounts(
+            CustomerRepository customerRepository,
+            AccountRepository accountRepository,
+            String email
+    ) {
+        Customer customer = customerRepository.requireByEmail(email);
+        Account checking = accountRepository.findByCustomerIdAndType(customer.getId(), AccountType.CHECKING)
+                .orElseThrow();
+        Account savings = accountRepository.findByCustomerIdAndType(customer.getId(), AccountType.SAVINGS)
+                .orElseThrow();
+        return new CustomerAccounts(customer, checking, savings);
+    }
+
+    private Transaction buildDemoTransaction(
+            CustomerAccounts customerAccounts,
+            Account recipientChecking,
+            int customerIndex,
+            int sequence
+    ) {
+        Account checking = customerAccounts.checking();
+        Account savings = customerAccounts.savings();
+        Long userId = customerAccounts.customer().getUserId();
+        BigDecimal amount = new BigDecimal("10.00").add(new BigDecimal(sequence));
+        Instant timestamp = Instant.now()
+                .minus(Duration.ofDays(sequence))
+                .minus(Duration.ofHours(customerIndex * 3L + sequence));
+
+        Transaction transaction = switch (sequence % 5) {
+            case 0 -> new Transaction(
+                    checking.getId(), savings.getId(), amount, userId, TransactionType.INTERNAL_TRANSFER
+            );
+            case 1 -> new Transaction(
+                    savings.getId(), checking.getId(), amount, userId, TransactionType.INTERNAL_TRANSFER
+            );
+            case 2 -> new Transaction(
+                    null, checking.getId(), amount, userId, TransactionType.ATM_DEPOSIT
+            );
+            case 3 -> new Transaction(
+                    checking.getId(), null, amount, userId, TransactionType.ATM_WITHDRAWAL
+            );
+            default -> new Transaction(
+                    checking.getId(),
+                    recipientChecking.getId(),
+                    amount,
+                    userId,
+                    TransactionType.EXTERNAL_TRANSFER
+            );
+        };
+
+        transaction.setTimestamp(timestamp);
+        return transaction;
+    }
+
+    private record CustomerAccounts(Customer customer, Account checking, Account savings) {
     }
 }

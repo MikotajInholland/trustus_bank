@@ -1,4 +1,4 @@
-/** @summary Shared application constants. */
+// Shared application constants.
 package com.trustus.bank.common;
 
 public final class BankConstants {

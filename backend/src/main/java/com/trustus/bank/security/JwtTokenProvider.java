@@ -1,7 +1,5 @@
-/**
- * @summary Creates and validates JWT access tokens. 
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Creates and validates JWT access tokens.
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.security;
 
 import com.trustus.bank.config.PasswordConfig.JwtProperties;

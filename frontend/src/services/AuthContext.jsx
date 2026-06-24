@@ -1,7 +1,5 @@
-/**
- * @summary JWT auth state and login/logout helpers.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// JWT auth state and login/logout helpers.
+// @author Wesley (Dev 1 — Gatekeeper)
 import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext(null)

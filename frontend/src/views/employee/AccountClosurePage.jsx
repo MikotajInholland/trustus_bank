@@ -1,7 +1,5 @@
-/**
- * @summary Employee tool to close customer accounts.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Employee tool to close customer accounts.
+// @author Wesley (Dev 1 — Gatekeeper)
 import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
 import useDebouncedValue from '../../services/useDebouncedValue'

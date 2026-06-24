@@ -1,7 +1,5 @@
-/**
- * @summary Persistence queries for users. 
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Persistence queries for users.
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.repositories;
 
 import com.trustus.bank.entities.User;

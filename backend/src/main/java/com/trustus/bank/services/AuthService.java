@@ -1,7 +1,5 @@
-/**
- * @summary Login, registration, and pending approval listing.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Login, registration, and pending approval listing.
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.services;
 
 import com.trustus.bank.dto.CustomerSummaryDto;

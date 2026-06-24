@@ -1,10 +1,7 @@
-/**
- * @summary Filter form for transaction history queries.
- * @author Mikotaj (Dev 3 — Auditor)
- */
-/**
- * @summary Renders date, amount, and IBAN filters for transaction history.
- */
+
+ // Filter form for transaction history queries.
+ // @author Mikotaj (Dev 3 — Auditor)
+
 export default function TransactionFilters({ filters, onChange }) {
   return (
     <div className="glass-card glass-card-padded mb-3">
@@ -82,9 +79,7 @@ export default function TransactionFilters({ filters, onChange }) {
   )
 }
 
-/**
- * @summary Converts filter form state into query params for the transactions API.
- */
+// Converts filter form state into query params for the transactions API.
 export function buildTransactionParams(filters, page = 0, size = 20) {
   const params = { page, size }
   if (filters.startDate) params.startDate = new Date(filters.startDate).toISOString()

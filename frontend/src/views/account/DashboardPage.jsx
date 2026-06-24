@@ -1,7 +1,5 @@
-/**
- * @summary Customer account balances and profile overview.
- * @author Darlington (Dev 2 — Teller)
- */
+// Customer account balances and profile overview.
+// @author Darlington (Dev 2 — Teller)
 import { useEffect, useState } from 'react'
 import api from '../../services/client'
 import AccountCard from '../../components/AccountCard'

@@ -1,7 +1,5 @@
-/**
- * @summary HTTP security filter chain and route authorization rules.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// HTTP security filter chain and route authorization rules.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.config;
 
 import com.trustus.bank.security.CustomerApprovalFilter;
@@ -24,9 +22,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomerApprovalFilter customerApprovalFilter;
 
-    /**
-     * @summary Injects JWT and customer-approval security filters.
-     */
+    // Injects JWT and customer-approval security filters.
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
             CustomerApprovalFilter customerApprovalFilter
@@ -35,9 +31,7 @@ public class SecurityConfig {
         this.customerApprovalFilter = customerApprovalFilter;
     }
 
-    /**
-     * @summary Configures stateless JWT auth and role-based API access rules.
-     */
+    // Configures stateless JWT auth and role-based API access rules.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -48,6 +42,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/register",
+                                "/api/docs/errors/not-found",
+                                "/api/docs/errors/business-rule",
+                                "/api/docs/errors/validation",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/api-docs/**",

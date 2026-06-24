@@ -1,7 +1,5 @@
-/**
- * @summary Customer transaction history with filters.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Customer transaction history with filters.
+// @author Mikotaj (Dev 3 — Auditor)
 import { useCallback, useEffect, useState } from 'react'
 import api from '../../services/client'
 import useDebouncedValue from '../../services/useDebouncedValue'
@@ -14,9 +12,7 @@ const EMPTY_FILTERS = {
   startDate: '', endDate: '', minAmount: '', maxAmount: '', exactAmount: '', iban: '',
 }
 
-/**
- * @summary Customer page for viewing filtered transaction history.
- */
+// Customer page for viewing filtered transaction history.
 export default function TransactionsPage() {
   const [transactions, setTransactions] = useState([])
   const [filters, setFilters] = useState(EMPTY_FILTERS)
@@ -26,9 +22,7 @@ export default function TransactionsPage() {
 
   useEffect(() => { setPage(0) }, [debouncedFilters])
 
-  /**
-   * @summary Fetches paginated transactions from the customer history API.
-   */
+  // Fetches paginated transactions from the customer history API.
   const load = useCallback(() => {
     const params = buildTransactionParams(debouncedFilters, page, 20)
     api.get('/customer/transactions', { params })

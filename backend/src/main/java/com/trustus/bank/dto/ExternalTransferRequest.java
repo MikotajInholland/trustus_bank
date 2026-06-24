@@ -1,7 +1,5 @@
-/**
- * @summary External transfer destination IBAN and amount. 
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// External transfer destination IBAN and amount.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.dto;
 
 import jakarta.validation.constraints.DecimalMin;

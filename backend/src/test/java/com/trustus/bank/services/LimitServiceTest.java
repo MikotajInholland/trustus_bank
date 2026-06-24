@@ -1,7 +1,5 @@
-/**
- * @summary Unit tests for daily and absolute transfer limit checks.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Unit tests for daily and absolute transfer limit checks.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.services;
 
 import com.trustus.bank.common.enums.AccountType;
@@ -50,9 +48,7 @@ class LimitServiceTest {
     private Customer customer;
     private Account checking;
 
-    /**
-     * @summary Creates a test customer with limits and a checking account.
-     */
+    // Creates a test customer with limits and a checking account.
     @BeforeEach
     void setUp() {
         User user = userRepository.save(new User("limit.test@example.com", "hash", RoleType.CUSTOMER));
@@ -67,9 +63,7 @@ class LimitServiceTest {
         checking = accountRepository.save(new Account(customer.getId(), AccountType.CHECKING, "NL99INHO0123456789"));
     }
 
-    /**
-     * @summary Verifies transfers above the absolute limit are rejected.
-     */
+    // Verifies transfers above the absolute limit are rejected.
     @Test
     void rejectsTransferExceedingAbsoluteLimit() {
         assertThatThrownBy(() -> limitService.validateTransferLimits(customer, new BigDecimal("1500.00")))
@@ -77,9 +71,7 @@ class LimitServiceTest {
                 .hasMessageContaining("absolute limit");
     }
 
-    /**
-     * @summary Verifies transfers that exceed the remaining daily limit are rejected.
-     */
+    // Verifies transfers that exceed the remaining daily limit are rejected.
     @Test
     void rejectsTransferExceedingDailyLimit() {
         transactionRepository.save(new Transaction(
@@ -95,9 +87,7 @@ class LimitServiceTest {
                 .hasMessageContaining("daily limit");
     }
 
-    /**
-     * @summary Verifies transfers within both limits are accepted.
-     */
+    // Verifies transfers within both limits are accepted.
     @Test
     void allowsTransferWithinLimits() {
         limitService.validateTransferLimits(customer, new BigDecimal("100.00"));

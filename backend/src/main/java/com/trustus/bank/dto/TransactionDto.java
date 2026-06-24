@@ -1,7 +1,5 @@
-/**
- * @summary Single ledger transaction for API responses. 
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Single ledger transaction for API responses.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.dto;
 
 import com.trustus.bank.common.enums.TransactionType;

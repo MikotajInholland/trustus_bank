@@ -1,7 +1,5 @@
-/**
- * @summary ATM deposit and withdrawal interface.
- * @author Darlington (Dev 2 — Teller)
- */
+// ATM deposit and withdrawal interface.
+// @author Darlington (Dev 2 — Teller)
 import { useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
 import PageHeader from '../../components/PageHeader'

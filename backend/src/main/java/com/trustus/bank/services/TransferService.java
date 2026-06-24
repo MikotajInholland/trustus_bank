@@ -1,7 +1,5 @@
-/**
- * @summary External and employee transfers with limit enforcement.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// External and employee transfers with limit enforcement.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.services;
 
 import com.trustus.bank.common.BankConstants;
@@ -38,9 +36,7 @@ public class TransferService {
     private final TransactionService transactionService;
     private final LimitService limitService;
 
-    /**
-     * @summary Wires repositories and helper services for transfer operations.
-     */
+    // Wires repositories and helper services for transfer operations.
     public TransferService(
             CustomerRepository customerRepository,
             AccountRepository accountRepository,
@@ -55,9 +51,7 @@ public class TransferService {
         this.limitService = limitService;
     }
 
-    /**
-     * @summary Transfers EUR from a customer's checking account to another customer's account.
-     */
+    // Transfers EUR from a customer's checking account to another customer's account.
     @Transactional
     public void customerExternalTransfer(String email, ExternalTransferRequest request) {
         Customer sender = customerRepository.requireByEmail(email);
@@ -71,9 +65,7 @@ public class TransferService {
         executeTransfer(from, to, request.amount(), sender, TransactionType.EXTERNAL_TRANSFER);
     }
 
-    /**
-     * @summary Transfers EUR on behalf of a customer from their checking account.
-     */
+    // Transfers EUR on behalf of a customer from their checking account.
     @Transactional
     public void employeeExternalTransfer(Long fromCustomerId, ExternalTransferRequest request) {
         Customer sender = customerRepository.requireById(fromCustomerId);
@@ -82,16 +74,12 @@ public class TransferService {
         executeTransfer(from, to, request.amount(), sender, TransactionType.EMPLOYEE_TRANSFER);
     }
 
-    /**
-     * @summary Returns the daily and absolute transfer limits for a customer.
-     */
+    // Returns the daily and absolute transfer limits for a customer.
     public CustomerLimitsDto getLimits(Long customerId) {
         return toLimitsDto(customerRepository.requireById(customerId));
     }
 
-    /**
-     * @summary Updates a customer's daily and absolute transfer limits.
-     */
+    // Updates a customer's daily and absolute transfer limits.
     @Transactional
     public CustomerLimitsDto updateLimits(Long customerId, UpdateLimitsRequest request) {
         Customer customer = customerRepository.requireById(customerId);
@@ -100,9 +88,7 @@ public class TransferService {
         return toLimitsDto(customer);
     }
 
-    /**
-     * @summary Returns paginated, filtered transactions for the logged-in customer.
-     */
+    // Returns paginated, filtered transactions for the logged-in customer.
     public PageResponse<TransactionDto> getCustomerTransactions(
             String email,
             Instant startDate,
@@ -119,9 +105,7 @@ public class TransferService {
         );
     }
 
-    /**
-     * @summary Returns paginated, filtered transactions for a customer by ID.
-     */
+    // Returns paginated, filtered transactions for a customer by ID.
     public PageResponse<TransactionDto> getTransactionsForCustomerId(
             Long customerId,
             Instant startDate,
@@ -138,16 +122,12 @@ public class TransferService {
         );
     }
 
-    /**
-     * @summary Returns every transaction in the system, newest first.
-     */
+    // Returns every transaction in the system, newest first.
     public PageResponse<TransactionDto> getGlobalLedger(Pageable pageable) {
         return PageResponse.from(transactionRepository.findAllByOrderByTimestampDesc(pageable), this::toDto);
     }
 
-    /**
-     * @summary Queries and maps transactions involving any of the customer's accounts.
-     */
+    // Queries and maps transactions involving any of the customer's accounts.
     private PageResponse<TransactionDto> getTransactionsForCustomer(
             Customer customer,
             Instant startDate,
@@ -182,18 +162,14 @@ public class TransferService {
         return PageResponse.from(page, this::toDto);
     }
 
-    /**
-     * @summary Looks up an active account by destination IBAN.
-     */
+    // Looks up an active account by destination IBAN.
     private Account resolveActiveAccountByIban(String iban) {
         return accountRepository.findByIban(iban)
                 .filter(Account::isActive)
                 .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
     }
 
-    /**
-     * @summary Validates balance and limits, moves funds, and records the ledger entry.
-     */
+    // Validates balance and limits, moves funds, and records the ledger entry.
     private void executeTransfer(Account from, Account to, BigDecimal amount, Customer sender, TransactionType type) {
         if (from.getId().equals(to.getId())) {
             throw new BusinessRuleException("Cannot transfer to the same account");
@@ -209,18 +185,14 @@ public class TransferService {
         transactionService.recordExternalTransfer(from, to, amount, sender.getUserId(), type);
     }
 
-    /**
-     * @summary Returns the customer's active checking account.
-     */
+    // Returns the customer's active checking account.
     private Account getCheckingAccount(Long customerId) {
         return accountRepository.findByCustomerIdAndType(customerId, AccountType.CHECKING)
                 .filter(Account::isActive)
                 .orElseThrow(() -> new ResourceNotFoundException("Checking account not found"));
     }
 
-    /**
-     * @summary Maps a customer entity to a limits response DTO.
-     */
+    // Maps a customer entity to a limits response DTO.
     private CustomerLimitsDto toLimitsDto(Customer customer) {
         return new CustomerLimitsDto(
                 customer.getId(),
@@ -231,9 +203,7 @@ public class TransferService {
         );
     }
 
-    /**
-     * @summary Maps a transaction entity to an API response DTO with IBANs.
-     */
+    // Maps a transaction entity to an API response DTO with IBANs.
     private TransactionDto toDto(Transaction transaction) {
         return new TransactionDto(
                 transaction.getId(),
@@ -246,9 +216,7 @@ public class TransferService {
         );
     }
 
-    /**
-     * @summary Resolves an account ID to its IBAN, or null when absent.
-     */
+    // Resolves an account ID to its IBAN, or null when absent.
     private String resolveIban(Long accountId) {
         if (accountId == null) {
             return null;

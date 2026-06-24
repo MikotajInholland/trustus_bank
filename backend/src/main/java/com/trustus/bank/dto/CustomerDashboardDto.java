@@ -1,7 +1,5 @@
-/**
- * @summary Customer profile and account balances for the dashboard. 
- * @author Darlington (Dev 2 — Teller)
- */
+// Customer profile and account balances for the dashboard.
+// @author Darlington (Dev 2 — Teller)
 package com.trustus.bank.dto;
 
 import java.math.BigDecimal;

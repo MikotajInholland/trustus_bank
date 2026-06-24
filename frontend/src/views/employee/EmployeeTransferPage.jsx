@@ -1,15 +1,11 @@
-/**
- * @summary Employee-initiated external transfers.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Employee-initiated external transfers.
+// @author Mikotaj (Dev 3 — Auditor)
 import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
 import useDebouncedValue from '../../services/useDebouncedValue'
 import PageHeader from '../../components/PageHeader'
 
-/**
- * @summary Employee page for transferring funds on behalf of a customer.
- */
+// Employee page for transferring funds on behalf of a customer.
 export default function EmployeeTransferPage() {
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebouncedValue(query)
@@ -50,9 +46,7 @@ export default function EmployeeTransferPage() {
     return () => { cancelled = true }
   }, [debouncedRecipientQuery])
 
-  /**
-   * @summary Executes an employee transfer via the backend API.
-   */
+  // Executes an employee transfer via the backend API.
   async function submitTransfer(event) {
     event.preventDefault()
     if (!selected) return

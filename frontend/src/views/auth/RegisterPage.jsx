@@ -1,7 +1,5 @@
-/**
- * @summary New customer registration form.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// New customer registration form.
+// @author Wesley (Dev 1 — Gatekeeper)
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api, { getApiErrorMessage } from '../../services/client'

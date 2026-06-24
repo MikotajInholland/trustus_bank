@@ -1,7 +1,5 @@
-/**
- * @summary Persistence queries for transactions.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Persistence queries for transactions.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.repositories;
 
 import org.springframework.data.domain.Page;
@@ -19,9 +17,7 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    /**
-     * @summary Sums outgoing transaction amounts since a given instant for limit enforcement.
-     */
+    // Sums outgoing transaction amounts since a given instant for limit enforcement.
     @Query("""
             SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
             WHERE t.fromAccountId IN :accountIds
@@ -34,9 +30,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("types") List<TransactionType> types
     );
 
-    /**
-     * @summary Returns paginated transactions for given accounts with optional date, amount, and IBAN filters.
-     */
+    // Returns paginated transactions for given accounts with optional date, amount, and IBAN filters.
     @Query("""
             SELECT t FROM Transaction t
             WHERE (t.fromAccountId IN :accountIds OR t.toAccountId IN :accountIds)
@@ -59,8 +53,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             Pageable pageable
     );
 
-    /**
-     * @summary Returns all transactions ordered by timestamp descending for the global ledger.
-     */
+    // Returns all transactions ordered by timestamp descending for the global ledger.
     Page<Transaction> findAllByOrderByTimestampDesc(Pageable pageable);
 }

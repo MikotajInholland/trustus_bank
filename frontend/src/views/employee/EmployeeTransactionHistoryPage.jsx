@@ -1,7 +1,5 @@
-/**
- * @summary Employee view of a customer's transactions.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Employee view of a customer's transactions.
+// @author Mikotaj (Dev 3 — Auditor)
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../services/client'
@@ -15,9 +13,7 @@ const EMPTY_FILTERS = {
   startDate: '', endDate: '', minAmount: '', maxAmount: '', exactAmount: '', iban: '',
 }
 
-/**
- * @summary Employee page for viewing a specific customer's transaction history.
- */
+// Employee page for viewing a specific customer's transaction history.
 export default function EmployeeTransactionHistoryPage() {
   const { customerId } = useParams()
   const [transactions, setTransactions] = useState([])
@@ -28,9 +24,7 @@ export default function EmployeeTransactionHistoryPage() {
 
   useEffect(() => { setPage(0) }, [debouncedFilters])
 
-  /**
-   * @summary Fetches paginated transactions for the customer from the employee API.
-   */
+  // Fetches paginated transactions for the customer from the employee API.
   const load = useCallback(() => {
     const params = buildTransactionParams(debouncedFilters, page, 20)
     api.get(`/employee/customers/${customerId}/transactions`, { params })

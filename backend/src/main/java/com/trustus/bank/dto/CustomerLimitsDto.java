@@ -1,7 +1,5 @@
-/**
- * @summary Daily and absolute transfer limits for a customer. 
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Daily and absolute transfer limits for a customer.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.dto;
 
 import java.math.BigDecimal;

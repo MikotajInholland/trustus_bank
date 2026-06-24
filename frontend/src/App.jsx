@@ -1,7 +1,5 @@
-/**
- * @summary Route definitions and auth-guarded layout.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
+// Route definitions and auth-guarded layout.
+// @author Wesley, Darlington, Mikotaj (shared)
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './services/AuthContext'
 import Layout, { ProtectedRoute } from './components/Layout'

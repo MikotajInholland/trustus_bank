@@ -1,14 +1,12 @@
-/**
- * @summary Lightweight tilt and magnetic hover hooks for dashboard micro-interactions.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
+// Lightweight tilt and magnetic hover hooks for dashboard micro-interactions.
+// @author Wesley, Darlington, Mikotaj (shared)
 import { useEffect, useRef } from 'react'
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-/** Subtle 3D tilt toward the cursor (max ~7°). */
+// Subtle 3D tilt toward the cursor (max ~7°).
 export function useCardTilt(maxTilt = 7) {
   const ref = useRef(null)
 
@@ -41,7 +39,7 @@ export function useCardTilt(maxTilt = 7) {
   return ref
 }
 
-/** Gently pulls an element toward the cursor within a radius. */
+// Gently pulls an element toward the cursor within a radius.
 export function useMagnetic(strength = 0.22, radius = 96) {
   const ref = useRef(null)
 

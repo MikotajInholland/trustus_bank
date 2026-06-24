@@ -1,7 +1,5 @@
-/**
- * @summary Screen shown while account approval is pending.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Screen shown while account approval is pending.
+// @author Wesley (Dev 1 — Gatekeeper)
 import { Link } from 'react-router-dom'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'

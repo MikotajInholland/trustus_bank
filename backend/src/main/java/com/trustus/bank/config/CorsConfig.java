@@ -1,7 +1,5 @@
-/**
- * @summary CORS rules allowing local frontend dev servers.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// CORS rules allowing local frontend dev servers.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,9 +17,7 @@ public class CorsConfig {
     @Value("${trustus.cors.allowed-origin-patterns:http://localhost:*,http://127.0.0.1:*}")
     private List<String> allowedOriginPatterns;
 
-    /**
-     * @summary Registers CORS rules for all API routes.
-     */
+    // Registers CORS rules for all API routes.
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

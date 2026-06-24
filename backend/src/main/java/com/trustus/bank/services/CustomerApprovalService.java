@@ -1,7 +1,5 @@
-/**
- * @summary Approves customers and provisions checking/savings accounts.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Approves customers and provisions checking/savings accounts.
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.services;
 
 import com.trustus.bank.dto.ApprovalRequest;

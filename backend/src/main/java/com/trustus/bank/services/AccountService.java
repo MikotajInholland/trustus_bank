@@ -1,7 +1,5 @@
-/**
- * @summary Dashboard, directory search, internal transfers, and ATM operations.
- * @author Darlington (Dev 2 — Teller)
- */
+// Dashboard, directory search, internal transfers, and ATM operations.
+// @author Darlington (Dev 2 — Teller)
 package com.trustus.bank.services;
 
 import com.trustus.bank.dto.AccountDto;

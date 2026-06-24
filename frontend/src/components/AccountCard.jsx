@@ -1,7 +1,5 @@
-/**
- * @summary Neo-bank account card with glass, tilt, and animated border.
- * @author Darlington (Dev 2 — Teller)
- */
+// Neo-bank account card with glass, tilt, and animated border.
+// @author Darlington (Dev 2 — Teller)
 import GlowBorder from './GlowBorder'
 import { useCardTilt } from '../services/useMotionFx'
 

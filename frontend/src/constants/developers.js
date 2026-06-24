@@ -1,18 +1,12 @@
-/**
- * @summary Application module.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
-/** @summary Source-code ownership map (not shown in UI).
- *
- * Flat MVC layout — one folder per layer:
- *
- * Backend: controllers/, services/, repositories/, entities/, dto/
- * Frontend: views/, components/, services/, constants/
- *
- * Wesley (Dev 1 — Gatekeeper): auth flow, security, onboarding
- * Darlington (Dev 2 — Teller): accounts, dashboard, ATM, directory
- * Mikotaj (Dev 3 — Auditor): transfers, limits, ledger, config
- */
+// Application module.
+// @author Wesley, Darlington, Mikotaj (shared)
+// Source-code ownership map (not shown in UI).
+// Flat MVC layout — one folder per layer:
+// Backend: controllers/, services/, repositories/, entities/, dto/
+// Frontend: views/, components/, services/, constants/
+// Wesley (Dev 1 — Gatekeeper): auth flow, security, onboarding
+// Darlington (Dev 2 — Teller): accounts, dashboard, ATM, directory
+// Mikotaj (Dev 3 — Auditor): transfers, limits, ledger, config
 
 export const DEVELOPERS = {
   wesley: { name: 'Wesley', role: 'Dev 1', theme: 'Gatekeeper' },
@@ -20,7 +14,7 @@ export const DEVELOPERS = {
   mikotaj: { name: 'Mikotaj', role: 'Dev 3', theme: 'Auditor' },
 }
 
-/** Frontend view-folder ownership */
+// Frontend view-folder ownership
 export const FRONTEND_MODULES = {
   'views/auth': 'wesley',
   'views/account': 'darlington',
@@ -37,7 +31,7 @@ export const FRONTEND_MODULES = {
   'constants': 'wesley, darlington, mikotaj',
 }
 
-/** Backend class ownership (flat packages) */
+// Backend class ownership (flat packages)
 export const BACKEND_CLASSES = {
   AuthController: 'wesley',
   AuthService: 'wesley',

@@ -1,7 +1,5 @@
-/**
- * @summary App shell with navigation and logout.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
+// App shell with navigation and logout.
+// @author Wesley, Darlington, Mikotaj (shared)
 import { Link, Navigate } from 'react-router-dom'
 import { useAuth } from '../services/AuthContext'
 import AmbientField from './AmbientField'

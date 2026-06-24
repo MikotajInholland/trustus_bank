@@ -1,9 +1,7 @@
-/**
- * @summary Application module.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
-/** @summary Demo login credentials matching backend DataSeeder.
- * Demo login accounts — must match backend DataSeeder. */
+// Application module.
+// @author Wesley, Darlington, Mikotaj (shared)
+// Demo login credentials matching backend DataSeeder.
+// Demo login accounts — must match backend DataSeeder.
 export const DEMO_ACCOUNTS = [
   {
     id: 'wesley',

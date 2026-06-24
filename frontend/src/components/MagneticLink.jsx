@@ -1,7 +1,5 @@
-/**
- * @summary Link/button wrapper with subtle magnetic cursor pull.
- * @author Darlington (Dev 2 — Teller)
- */
+// Link/button wrapper with subtle magnetic cursor pull.
+// @author Darlington (Dev 2 — Teller)
 import { Link } from 'react-router-dom'
 import { useMagnetic } from '../services/useMotionFx'
 

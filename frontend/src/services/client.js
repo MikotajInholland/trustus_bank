@@ -1,7 +1,5 @@
-/**
- * @summary Axios instance with JWT and error helpers.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Axios instance with JWT and error helpers.
+// @author Wesley (Dev 1 — Gatekeeper)
 import axios from 'axios'
 
 const api = axios.create({
@@ -16,7 +14,7 @@ api.interceptors.request.use((config) => {
   return config
 })
 
-/** Extract a human-readable message from an Axios error response. */
+// Extract a human-readable message from an Axios error response.
 export function getApiErrorMessage(error, fallback = 'Something went wrong') {
   if (!error?.response) {
     return 'Cannot reach the server. Is the backend running on port 8080?'

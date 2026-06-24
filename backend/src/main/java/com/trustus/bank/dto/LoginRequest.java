@@ -1,7 +1,5 @@
-/**
- * @summary Login credentials (email and password). 
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Login credentials (email and password).
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.dto;
 
 import jakarta.validation.constraints.Email;

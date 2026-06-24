@@ -1,7 +1,5 @@
-/**
- * @summary Persistence queries for accounts. 
- * @author Darlington (Dev 2 — Teller)
- */
+// Persistence queries for accounts.
+// @author Darlington (Dev 2 — Teller)
 package com.trustus.bank.repositories;
 
 import com.trustus.bank.entities.Account;

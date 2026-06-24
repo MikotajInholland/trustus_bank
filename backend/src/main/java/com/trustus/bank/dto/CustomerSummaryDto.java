@@ -1,7 +1,5 @@
-/**
- * @summary Summary of a customer for employee list views.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Summary of a customer for employee list views.
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.dto;
 
 import com.trustus.bank.entities.Customer;

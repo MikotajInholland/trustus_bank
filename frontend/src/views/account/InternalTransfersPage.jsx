@@ -1,7 +1,5 @@
-/**
- * @summary Move funds between own checking and savings.
- * @author Darlington (Dev 2 — Teller)
- */
+// Move funds between own checking and savings.
+// @author Darlington (Dev 2 — Teller)
 import { useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
 import GlassCard from '../../components/GlassCard'

@@ -1,7 +1,5 @@
-/**
- * @summary Page title and subtitle block.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
+// Page title and subtitle block.
+// @author Wesley, Darlington, Mikotaj (shared)
 export default function PageHeader({ title, subtitle, children }) {
   return (
     <div className="page-header mb-4 page-header-reveal">

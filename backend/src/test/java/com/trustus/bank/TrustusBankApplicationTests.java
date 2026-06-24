@@ -1,7 +1,5 @@
-/**
- * @summary Smoke test that the Spring context loads. 
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Smoke test that the Spring context loads.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank;
 
 import org.junit.jupiter.api.Test;

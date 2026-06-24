@@ -1,7 +1,5 @@
-/**
- * @summary Sign-in form with one-click demo logins.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Sign-in form with one-click demo logins.
+// @author Wesley (Dev 1 — Gatekeeper)
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api, { getApiErrorMessage } from '../../services/client'

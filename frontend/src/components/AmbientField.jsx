@@ -1,7 +1,5 @@
-/**
- * @summary Canvas particle field — slow drift, soft connections, mouse pull.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
+// Canvas particle field — slow drift, soft connections, mouse pull.
+// @author Wesley, Darlington, Mikotaj (shared)
 import { useEffect, useRef } from 'react'
 
 const COLORS = [

@@ -1,7 +1,5 @@
-/**
- * @summary JPA entity for a money movement ledger entry.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// JPA entity for a money movement ledger entry.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.entities;
 
 import com.trustus.bank.common.enums.TransactionType;
@@ -44,23 +42,11 @@ public class Transaction {
     @Column(nullable = false)
     private TransactionType type;
 
-    /**
-
-
-     * @summary JPA no-args constructor.
-
-
-     */
+ 
     protected Transaction() {
     }
 
-    /**
-
-
-     * @summary Creates a new ledger entry with the given accounts, amount, user, and type.
-
-
-     */
+ 
     public Transaction(
             Long fromAccountId,
             Long toAccountId,
@@ -75,79 +61,41 @@ public class Transaction {
         this.type = type;
     }
 
-    /**
-
-
-     * @summary Returns the persisted transaction ID.
-
-
-     */
+   
     public Long getId() {
         return id;
     }
 
-    /**
-
-
-     * @summary Returns the source account ID, or null for ATM deposits.
-
-
-     */
+ 
     public Long getFromAccountId() {
         return fromAccountId;
     }
 
-    /**
-
-
-     * @summary Returns the destination account ID, or null for ATM withdrawals.
-
-
-     */
+ 
     public Long getToAccountId() {
         return toAccountId;
     }
 
-    /**
-
-
-     * @summary Returns the transferred amount in EUR.
-
-
-     */
+  
     public BigDecimal getAmount() {
         return amount;
     }
 
-    /**
-
-
-     * @summary Returns when the transaction was recorded.
-
-
-     */
+  
     public Instant getTimestamp() {
         return timestamp;
     }
 
-    /**
+   
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
 
-
-     * @summary Returns the user ID who initiated the transaction.
-
-
-     */
+  
     public Long getInitiatingUserId() {
         return initiatingUserId;
     }
 
-    /**
-
-
-     * @summary Returns the transaction category.
-
-
-     */
     public TransactionType getType() {
         return type;
     }

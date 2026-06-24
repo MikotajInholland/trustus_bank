@@ -1,7 +1,5 @@
-/**
- * @summary Employee queue to approve new customers.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Employee queue to approve new customers.
+// @author Wesley (Dev 1 — Gatekeeper)
 import { useCallback, useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
 import useDebouncedValue from '../../services/useDebouncedValue'

@@ -1,10 +1,6 @@
-/**
- * @summary Table for displaying ledger transactions.
- * @author Mikotaj (Dev 3 — Auditor)
- */
-/**
- * @summary Renders a paginated list of transactions with type, IBANs, amount, and timestamp.
- */
+// Table for displaying ledger transactions.
+// @author Mikotaj (Dev 3 — Auditor)
+// Renders a paginated list of transactions with type, IBANs, amount, and timestamp.
 export default function TransactionTable({ transactions, emptyMessage = 'No transactions found' }) {
   return (
     <div className="table-responsive glass-card">

@@ -1,7 +1,5 @@
-/**
- * @summary Integration tests for login and registration endpoints.
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Integration tests for login and registration endpoints.
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

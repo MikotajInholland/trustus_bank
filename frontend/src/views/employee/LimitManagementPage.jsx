@@ -1,15 +1,11 @@
-/**
- * @summary View and update customer transfer limits.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// View and update customer transfer limits.
+// @author Mikotaj (Dev 3 — Auditor)
 import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
 import useDebouncedValue from '../../services/useDebouncedValue'
 import PageHeader from '../../components/PageHeader'
 
-/**
- * @summary Employee page for viewing and updating customer transfer limits.
- */
+// Employee page for viewing and updating customer transfer limits.
 export default function LimitManagementPage() {
   const [query, setQuery] = useState('')
   const debouncedQuery = useDebouncedValue(query)
@@ -32,17 +28,13 @@ export default function LimitManagementPage() {
     return () => { cancelled = true }
   }, [debouncedQuery])
 
-  /**
-   * @summary Loads daily and absolute limits for the selected customer.
-   */
+  // Loads daily and absolute limits for the selected customer.
   async function loadLimits(customerId) {
     const { data } = await api.get(`/employee/customers/${customerId}/limits`)
     setSelected(data)
   }
 
-  /**
-   * @summary Persists updated transfer limits to the backend.
-   */
+  // Persists updated transfer limits to the backend.
   async function saveLimits() {
     setMessage('')
     setError('')

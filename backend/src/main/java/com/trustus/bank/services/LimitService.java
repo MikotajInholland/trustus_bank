@@ -1,7 +1,5 @@
-/**
- * @summary Validates daily and absolute transfer limits per customer.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Validates daily and absolute transfer limits per customer.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.services;
 
 import com.trustus.bank.common.enums.TransactionType;
@@ -30,17 +28,13 @@ public class LimitService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
 
-    /**
-     * @summary Wires transaction and account repositories for limit checks.
-     */
+    // Wires transaction and account repositories for limit checks.
     public LimitService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
     }
 
-    /**
-     * @summary Rejects the amount when it exceeds daily or absolute transfer limits.
-     */
+    // Rejects the amount when it exceeds daily or absolute transfer limits.
     public void validateTransferLimits(Customer customer, BigDecimal amount) {
         if (amount.compareTo(customer.getAbsoluteTransferLimit()) > 0) {
             throw new BusinessRuleException("Transfer exceeds absolute limit of "
@@ -55,9 +49,7 @@ public class LimitService {
         }
     }
 
-    /**
-     * @summary Sums outgoing transfer and ATM withdrawal amounts since start of UTC day.
-     */
+    // Sums outgoing transfer and ATM withdrawal amounts since start of UTC day.
     public BigDecimal calculateDailyOutgoingTotal(Long customerId) {
         List<Long> accountIds = accountRepository.findByCustomerId(customerId).stream()
                 .map(Account::getId)

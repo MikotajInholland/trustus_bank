@@ -1,25 +1,19 @@
-/**
- * @summary Bank-wide transaction ledger for employees.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Bank-wide transaction ledger for employees.
+// @author Mikotaj (Dev 3 — Auditor)
 import { useCallback, useEffect, useState } from 'react'
 import api from '../../services/client'
 import PageHeader from '../../components/PageHeader'
 import Pagination from '../../components/Pagination'
 import TransactionTable from '../../components/TransactionTable'
 
-/**
- * @summary Employee page showing every transaction in the system.
- */
+// Employee page showing every transaction in the system.
 export default function GlobalLedgerPage() {
   const [transactions, setTransactions] = useState([])
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [totalElements, setTotalElements] = useState(0)
 
-  /**
-   * @summary Fetches a page of transactions from the global ledger API.
-   */
+  // Fetches a page of transactions from the global ledger API.
   const load = useCallback(() => {
     api.get('/employee/ledger', { params: { page, size: 50 } })
       .then(({ data }) => {

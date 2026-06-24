@@ -1,7 +1,5 @@
-/**
- * @summary Ledger transaction categories. 
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Ledger transaction categories.
+// @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.common.enums;
 
 public enum TransactionType {

@@ -1,7 +1,5 @@
-/**
- * @summary Extracts JWT from requests and sets Spring Security context. 
- * @author Wesley (Dev 1 — Gatekeeper)
- */
+// Extracts JWT from requests and sets Spring Security context.
+// @author Wesley (Dev 1 — Gatekeeper)
 package com.trustus.bank.security;
 
 import com.trustus.bank.entities.User;

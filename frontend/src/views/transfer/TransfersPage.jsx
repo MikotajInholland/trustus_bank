@@ -1,16 +1,12 @@
-/**
- * @summary Send external transfers from checking.
- * @author Mikotaj (Dev 3 — Auditor)
- */
+// Send external transfers from checking.
+// @author Mikotaj (Dev 3 — Auditor)
 import { useEffect, useState } from 'react'
 import api, { getApiErrorMessage } from '../../services/client'
 import useDebouncedValue from '../../services/useDebouncedValue'
 import GlassCard from '../../components/GlassCard'
 import PageHeader from '../../components/PageHeader'
 
-/**
- * @summary Customer page for sending external transfers from checking.
- */
+// Customer page for sending external transfers from checking.
 export default function TransfersPage() {
   const [form, setForm] = useState({ toIban: '', amount: '' })
   const [directoryQuery, setDirectoryQuery] = useState('')
@@ -33,18 +29,14 @@ export default function TransfersPage() {
     return () => { cancelled = true }
   }, [debouncedQuery])
 
-  /**
-   * @summary Fills the destination IBAN from a directory search result.
-   */
+  // Fills the destination IBAN from a directory search result.
   function selectRecipient(entry) {
     setForm({ ...form, toIban: entry.checkingIban })
     setDirectoryResults([])
     setDirectoryQuery(`${entry.firstName} ${entry.lastName}`)
   }
 
-  /**
-   * @summary Submits an external transfer to the backend API.
-   */
+  // Submits an external transfer to the backend API.
   async function handleSubmit(event) {
     event.preventDefault()
     setMessage('')

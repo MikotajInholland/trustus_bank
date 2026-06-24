@@ -1,7 +1,5 @@
-/**
- * @summary React DOM bootstrap and root render.
- * @author Wesley, Darlington, Mikotaj (shared)
- */
+// React DOM bootstrap and root render.
+// @author Wesley, Darlington, Mikotaj (shared)
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import 'bootstrap/dist/css/bootstrap.min.css'
