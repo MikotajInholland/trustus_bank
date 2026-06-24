@@ -1,15 +1,14 @@
-// Persistence queries for transactions.
+// Database access for the transactions table.
 // @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.repositories;
 
+import com.trustus.bank.common.enums.TransactionType;
+import com.trustus.bank.entities.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import com.trustus.bank.common.enums.TransactionType;
-import com.trustus.bank.entities.Transaction;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    // Sums outgoing transaction amounts since a given instant for limit enforcement.
+    // Used by LimitService: total outgoing amount since midnight UTC.
     @Query("""
             SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t
             WHERE t.fromAccountId IN :accountIds
@@ -30,7 +29,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("types") List<TransactionType> types
     );
 
-    // Returns paginated transactions for given accounts with optional date, amount, and IBAN filters.
+    // Customer history: any transaction touching one of the customer's accounts.
     @Query("""
             SELECT t FROM Transaction t
             WHERE (t.fromAccountId IN :accountIds OR t.toAccountId IN :accountIds)
@@ -53,6 +52,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             Pageable pageable
     );
 
-    // Returns all transactions ordered by timestamp descending for the global ledger.
+    // Global ledger: every transaction, newest first.
     Page<Transaction> findAllByOrderByTimestampDesc(Pageable pageable);
 }

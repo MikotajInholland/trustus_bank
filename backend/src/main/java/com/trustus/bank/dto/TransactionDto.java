@@ -1,11 +1,8 @@
-// Single ledger transaction for API responses.
+// One transaction returned to the frontend.
 // @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.dto;
 
 import com.trustus.bank.common.enums.TransactionType;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.Instant;

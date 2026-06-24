@@ -10,7 +10,7 @@ export default function TransactionFilters({ filters, onChange }) {
         <div className="col-md-3">
           <label className="form-label">Start date</label>
           <input
-            type="datetime-local"
+            type="date"
             className="form-control form-control-sm"
             value={filters.startDate}
             onChange={(e) => onChange({ ...filters, startDate: e.target.value })}
@@ -19,7 +19,7 @@ export default function TransactionFilters({ filters, onChange }) {
         <div className="col-md-3">
           <label className="form-label">End date</label>
           <input
-            type="datetime-local"
+            type="date"
             className="form-control form-control-sm"
             value={filters.endDate}
             onChange={(e) => onChange({ ...filters, endDate: e.target.value })}
@@ -79,11 +79,17 @@ export default function TransactionFilters({ filters, onChange }) {
   )
 }
 
+// Converts a YYYY-MM-DD value to the start or end of that local calendar day (ISO UTC).
+function toDayBoundary(dateValue, endOfDay) {
+  const day = dateValue.split('T')[0]
+  return new Date(`${day}T${endOfDay ? '23:59:59.999' : '00:00:00.000'}`).toISOString()
+}
+
 // Converts filter form state into query params for the transactions API.
 export function buildTransactionParams(filters, page = 0, size = 20) {
   const params = { page, size }
-  if (filters.startDate) params.startDate = new Date(filters.startDate).toISOString()
-  if (filters.endDate) params.endDate = new Date(filters.endDate).toISOString()
+  if (filters.startDate) params.startDate = toDayBoundary(filters.startDate, false)
+  if (filters.endDate) params.endDate = toDayBoundary(filters.endDate, true)
   if (filters.minAmount) params.minAmount = filters.minAmount
   if (filters.maxAmount) params.maxAmount = filters.maxAmount
   if (filters.exactAmount) params.exactAmount = filters.exactAmount
