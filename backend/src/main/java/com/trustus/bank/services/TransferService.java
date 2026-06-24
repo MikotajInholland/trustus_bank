@@ -1,62 +1,53 @@
-// External and employee transfers with limit enforcement.
+// External transfers and customer limit management.
 // @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.services;
 
 import com.trustus.bank.common.BankConstants;
-import com.trustus.bank.common.exception.BusinessRuleException;
-import com.trustus.bank.common.exception.ResourceNotFoundException;
+import com.trustus.bank.common.dto.PageResponse;
 import com.trustus.bank.common.enums.AccountType;
 import com.trustus.bank.common.enums.TransactionType;
-import com.trustus.bank.entities.Account;
-import com.trustus.bank.repositories.AccountRepository;
-import com.trustus.bank.entities.Customer;
-import com.trustus.bank.repositories.CustomerRepository;
-import com.trustus.bank.entities.Transaction;
-import com.trustus.bank.repositories.TransactionRepository;
+import com.trustus.bank.common.exception.BusinessRuleException;
+import com.trustus.bank.common.exception.ResourceNotFoundException;
 import com.trustus.bank.dto.CustomerLimitsDto;
 import com.trustus.bank.dto.ExternalTransferRequest;
 import com.trustus.bank.dto.TransactionDto;
+import com.trustus.bank.dto.TransactionFilters;
 import com.trustus.bank.dto.UpdateLimitsRequest;
-import com.trustus.bank.common.dto.PageResponse;
-import org.springframework.data.domain.Page;
+import com.trustus.bank.entities.Account;
+import com.trustus.bank.entities.Customer;
+import com.trustus.bank.repositories.AccountRepository;
+import com.trustus.bank.repositories.CustomerRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.List;
 
 @Service
 public class TransferService {
 
     private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
-    private final TransactionRepository transactionRepository;
     private final TransactionService transactionService;
     private final LimitService limitService;
 
-    // Wires repositories and helper services for transfer operations.
     public TransferService(
             CustomerRepository customerRepository,
             AccountRepository accountRepository,
-            TransactionRepository transactionRepository,
             TransactionService transactionService,
             LimitService limitService
     ) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
-        this.transactionRepository = transactionRepository;
         this.transactionService = transactionService;
         this.limitService = limitService;
     }
 
-    // Transfers EUR from a customer's checking account to another customer's account.
     @Transactional
     public void customerExternalTransfer(String email, ExternalTransferRequest request) {
         Customer sender = customerRepository.requireByEmail(email);
         Account from = getCheckingAccount(sender.getId());
-        Account to = resolveActiveAccountByIban(request.toIban());
+        Account to = findActiveAccountByIban(request.toIban());
 
         if (to.getCustomerId().equals(sender.getId())) {
             throw new BusinessRuleException("Cannot transfer to your own account");
@@ -65,21 +56,18 @@ public class TransferService {
         executeTransfer(from, to, request.amount(), sender, TransactionType.EXTERNAL_TRANSFER);
     }
 
-    // Transfers EUR on behalf of a customer from their checking account.
     @Transactional
-    public void employeeExternalTransfer(Long fromCustomerId, ExternalTransferRequest request) {
-        Customer sender = customerRepository.requireById(fromCustomerId);
+    public void employeeExternalTransfer(Long customerId, ExternalTransferRequest request) {
+        Customer sender = customerRepository.requireById(customerId);
         Account from = getCheckingAccount(sender.getId());
-        Account to = resolveActiveAccountByIban(request.toIban());
+        Account to = findActiveAccountByIban(request.toIban());
         executeTransfer(from, to, request.amount(), sender, TransactionType.EMPLOYEE_TRANSFER);
     }
 
-    // Returns the daily and absolute transfer limits for a customer.
     public CustomerLimitsDto getLimits(Long customerId) {
         return toLimitsDto(customerRepository.requireById(customerId));
     }
 
-    // Updates a customer's daily and absolute transfer limits.
     @Transactional
     public CustomerLimitsDto updateLimits(Long customerId, UpdateLimitsRequest request) {
         Customer customer = customerRepository.requireById(customerId);
@@ -88,88 +76,20 @@ public class TransferService {
         return toLimitsDto(customer);
     }
 
-    // Returns paginated, filtered transactions for the logged-in customer.
-    public PageResponse<TransactionDto> getCustomerTransactions(
-            String email,
-            Instant startDate,
-            Instant endDate,
-            BigDecimal minAmount,
-            BigDecimal maxAmount,
-            BigDecimal exactAmount,
-            String iban,
-            Pageable pageable
-    ) {
-        return getTransactionsForCustomer(
-                customerRepository.requireByEmail(email),
-                startDate, endDate, minAmount, maxAmount, exactAmount, iban, pageable
-        );
+    public PageResponse<TransactionDto> getCustomerTransactions(String email, TransactionFilters filters, Pageable pageable) {
+        Customer customer = customerRepository.requireByEmail(email);
+        return transactionService.getHistoryForCustomer(customer, filters, pageable);
     }
 
-    // Returns paginated, filtered transactions for a customer by ID.
-    public PageResponse<TransactionDto> getTransactionsForCustomerId(
-            Long customerId,
-            Instant startDate,
-            Instant endDate,
-            BigDecimal minAmount,
-            BigDecimal maxAmount,
-            BigDecimal exactAmount,
-            String iban,
-            Pageable pageable
-    ) {
-        return getTransactionsForCustomer(
-                customerRepository.requireById(customerId),
-                startDate, endDate, minAmount, maxAmount, exactAmount, iban, pageable
-        );
+    public PageResponse<TransactionDto> getTransactionsForCustomerId(Long customerId, TransactionFilters filters, Pageable pageable) {
+        Customer customer = customerRepository.requireById(customerId);
+        return transactionService.getHistoryForCustomer(customer, filters, pageable);
     }
 
-    // Returns every transaction in the system, newest first.
     public PageResponse<TransactionDto> getGlobalLedger(Pageable pageable) {
-        return PageResponse.from(transactionRepository.findAllByOrderByTimestampDesc(pageable), this::toDto);
+        return transactionService.getGlobalLedger(pageable);
     }
 
-    // Queries and maps transactions involving any of the customer's accounts.
-    private PageResponse<TransactionDto> getTransactionsForCustomer(
-            Customer customer,
-            Instant startDate,
-            Instant endDate,
-            BigDecimal minAmount,
-            BigDecimal maxAmount,
-            BigDecimal exactAmount,
-            String iban,
-            Pageable pageable
-    ) {
-        List<Long> accountIds = accountRepository.findByCustomerId(customer.getId()).stream()
-                .map(Account::getId)
-                .toList();
-
-        if (accountIds.isEmpty()) {
-            return PageResponse.from(Page.empty(pageable));
-        }
-
-        List<Long> ibanAccountIds = null;
-        if (iban != null && !iban.isBlank()) {
-            ibanAccountIds = accountRepository.findByIbanStartingWithIgnoreCase(iban.trim()).stream()
-                    .map(Account::getId)
-                    .toList();
-            if (ibanAccountIds.isEmpty()) {
-                return PageResponse.from(Page.empty(pageable));
-            }
-        }
-
-        Page<Transaction> page = transactionRepository.findFiltered(
-                accountIds, startDate, endDate, minAmount, maxAmount, exactAmount, ibanAccountIds, pageable
-        );
-        return PageResponse.from(page, this::toDto);
-    }
-
-    // Looks up an active account by destination IBAN.
-    private Account resolveActiveAccountByIban(String iban) {
-        return accountRepository.findByIban(iban)
-                .filter(Account::isActive)
-                .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
-    }
-
-    // Validates balance and limits, moves funds, and records the ledger entry.
     private void executeTransfer(Account from, Account to, BigDecimal amount, Customer sender, TransactionType type) {
         if (from.getId().equals(to.getId())) {
             throw new BusinessRuleException("Cannot transfer to the same account");
@@ -185,14 +105,18 @@ public class TransferService {
         transactionService.recordExternalTransfer(from, to, amount, sender.getUserId(), type);
     }
 
-    // Returns the customer's active checking account.
     private Account getCheckingAccount(Long customerId) {
         return accountRepository.findByCustomerIdAndType(customerId, AccountType.CHECKING)
                 .filter(Account::isActive)
                 .orElseThrow(() -> new ResourceNotFoundException("Checking account not found"));
     }
 
-    // Maps a customer entity to a limits response DTO.
+    private Account findActiveAccountByIban(String iban) {
+        return accountRepository.findByIban(iban)
+                .filter(Account::isActive)
+                .orElseThrow(() -> new ResourceNotFoundException("Destination account not found"));
+    }
+
     private CustomerLimitsDto toLimitsDto(Customer customer) {
         return new CustomerLimitsDto(
                 customer.getId(),
@@ -201,26 +125,5 @@ public class TransferService {
                 customer.getAbsoluteTransferLimit(),
                 BankConstants.CURRENCY
         );
-    }
-
-    // Maps a transaction entity to an API response DTO with IBANs.
-    private TransactionDto toDto(Transaction transaction) {
-        return new TransactionDto(
-                transaction.getId(),
-                resolveIban(transaction.getFromAccountId()),
-                resolveIban(transaction.getToAccountId()),
-                transaction.getAmount(),
-                BankConstants.CURRENCY,
-                transaction.getTimestamp(),
-                transaction.getType()
-        );
-    }
-
-    // Resolves an account ID to its IBAN, or null when absent.
-    private String resolveIban(Long accountId) {
-        if (accountId == null) {
-            return null;
-        }
-        return accountRepository.findById(accountId).map(Account::getIban).orElse(null);
     }
 }

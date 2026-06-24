@@ -91,7 +91,7 @@ class LimitServiceTest {
     @Test
     void allowsTransferWithinLimits() {
         limitService.validateTransferLimits(customer, new BigDecimal("100.00"));
-        assertThat(limitService.calculateDailyOutgoingTotal(customer.getId()))
+        assertThat(limitService.sumOutgoingToday(customer.getId()))
                 .isEqualByComparingTo(BigDecimal.ZERO);
     }
 }

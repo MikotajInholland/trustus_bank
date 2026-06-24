@@ -1,4 +1,4 @@
-// JPA entity for a money movement ledger entry.
+// One row in the bank ledger.
 // @author Mikotaj (Dev 3 — Auditor)
 package com.trustus.bank.entities;
 
@@ -42,18 +42,10 @@ public class Transaction {
     @Column(nullable = false)
     private TransactionType type;
 
- 
     protected Transaction() {
     }
 
- 
-    public Transaction(
-            Long fromAccountId,
-            Long toAccountId,
-            BigDecimal amount,
-            Long initiatingUserId,
-            TransactionType type
-    ) {
+    public Transaction(Long fromAccountId, Long toAccountId, BigDecimal amount, Long initiatingUserId, TransactionType type) {
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
         this.amount = amount;
@@ -61,37 +53,30 @@ public class Transaction {
         this.type = type;
     }
 
-   
     public Long getId() {
         return id;
     }
 
- 
     public Long getFromAccountId() {
         return fromAccountId;
     }
 
- 
     public Long getToAccountId() {
         return toAccountId;
     }
 
-  
     public BigDecimal getAmount() {
         return amount;
     }
 
-  
     public Instant getTimestamp() {
         return timestamp;
     }
 
-   
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 
-  
     public Long getInitiatingUserId() {
         return initiatingUserId;
     }
