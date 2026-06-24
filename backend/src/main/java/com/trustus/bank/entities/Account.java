@@ -33,7 +33,7 @@ public class Account {
     @Column(nullable = false, length = 18)
     private String iban;
 
-    @Column(nullable = false, precision = 19, scale = 2)
+    @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
     @Column(nullable = false)
