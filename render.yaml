@@ -1,11 +1,10 @@
 services:
   - type: web
-    name: trustus-bank-api
+    name: trustus-bank
     runtime: docker
-    rootDir: backend
     dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /
     envVars:
       - key: TRUSTUS_JWT_SECRET
         generateValue: true
-      - key: TRUSTUS_CORS_ALLOWED_ORIGIN_PATTERNS
-        sync: false

@@ -104,12 +104,16 @@ App: http://localhost:5173 — Vite proxies `/api` to the backend.
 - Customer transaction history (pagination + filters)
 - Employee per-customer transaction history
 - Global ledger (all transactions, paginated)
-- CI/CD: GitHub Actions + GitHub Pages (frontend), Render.com template (backend)
+- CI: GitHub Actions; deployment: single Render.com service
 
-## Deployment (Mikotaj)
+## Deployment (Render, single service)
 
-- **Backend:** `render.yaml` on Render.com — set `TRUSTUS_JWT_SECRET` and CORS for your GitHub Pages URL.
-- **Frontend:** GitHub Actions deploys to GitHub Pages on push to `main`. Set repository variable `VITE_API_URL` to your Render API URL.
+Frontend and backend ship as **one Docker image** (`Dockerfile` at repo root): the React app is built with Vite and embedded into the Spring Boot jar, which serves both the UI and `/api` from the same origin (no CORS setup needed).
+
+- Create a Render **Blueprint** from this repo (uses `render.yaml`) or a Docker web service with the repo root as context.
+- `TRUSTUS_JWT_SECRET` is generated automatically.
+- Local dev is unchanged: `mvn spring-boot:run` in `backend/` and `npm run dev` in `frontend/`.
+- Local single-package test: `docker build -t trustus-bank . && docker run -p 8080:8080 trustus-bank`, then open http://localhost:8080.
 
 ## API overview
 

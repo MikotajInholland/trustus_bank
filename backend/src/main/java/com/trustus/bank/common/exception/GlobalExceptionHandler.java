@@ -39,6 +39,12 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Validation failed", fieldErrors);
     }
 
+    // Unknown routes / missing static files are a 404, not a server error.
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNoResource(Exception ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, "Resource not found", null);
+    }
+
     // Handles unexpected exceptions with a generic 500 response.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGeneric(Exception ex) {

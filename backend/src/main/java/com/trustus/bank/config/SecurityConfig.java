@@ -53,7 +53,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                         .requestMatchers("/api/employee/**").hasRole("EMPLOYEE")
                         .requestMatchers("/api/customer/**").hasAnyRole("CUSTOMER", "EMPLOYEE")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/**").authenticated()
+                        // Everything else is the bundled React frontend (static files + SPA routes).
+                        .anyRequest().permitAll()
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
