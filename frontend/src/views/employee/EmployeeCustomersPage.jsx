@@ -45,7 +45,7 @@ export default function EmployeeCustomersPage() {
       <p className="text-muted small">{totalElements} active customer(s)</p>
 
       <div className="table-responsive glass-card">
-        <table className="table table-hover mb-0">
+        <table className="table table-hover mb-0 table-stack">
           <thead>
             <tr>
               <th>Name</th>
@@ -56,14 +56,14 @@ export default function EmployeeCustomersPage() {
           </thead>
           <tbody>
             {customers.length === 0 && (
-              <tr><td colSpan="4" className="text-muted text-center py-5">No customers found</td></tr>
+              <tr><td colSpan="4" className="text-muted text-center py-5 table-stack-empty">No customers found</td></tr>
             )}
             {customers.map((customer) => (
               <tr key={customer.id}>
-                <td>{customer.firstName} {customer.lastName}</td>
-                <td>{customer.email}</td>
-                <td>{customer.phoneNumber}</td>
-                <td>
+                <td data-label="Name">{customer.firstName} {customer.lastName}</td>
+                <td data-label="Email">{customer.email}</td>
+                <td data-label="Phone">{customer.phoneNumber}</td>
+                <td data-label="Actions">
                   <Link
                     className="btn btn-sm btn-outline-primary"
                     to={`/employee/customers/${customer.id}/transactions`}

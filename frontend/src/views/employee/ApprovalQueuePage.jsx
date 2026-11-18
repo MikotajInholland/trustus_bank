@@ -84,8 +84,8 @@ export default function ApprovalQueuePage() {
           <div className="list-group-item text-muted text-center py-5">No pending customers</div>
         )}
         {customers.map((customer) => (
-          <div className="list-group-item d-flex justify-content-between align-items-center gap-3" key={customer.id}>
-            <div>
+          <div className="list-group-item approval-row" key={customer.id}>
+            <div className="approval-row-info">
               <strong>{customer.firstName} {customer.lastName}</strong>
               <div className="small text-muted">{customer.email} · {customer.phoneNumber}</div>
             </div>

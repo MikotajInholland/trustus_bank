@@ -4,7 +4,7 @@
 export default function TransactionTable({ transactions, emptyMessage = 'No transactions found' }) {
   return (
     <div className="table-responsive glass-card">
-      <table className="table table-hover mb-0">
+      <table className="table table-hover mb-0 table-stack">
         <thead>
           <tr>
             <th>Type</th>
@@ -16,17 +16,17 @@ export default function TransactionTable({ transactions, emptyMessage = 'No tran
         </thead>
         <tbody>
           {transactions.length === 0 && (
-            <tr><td colSpan="5" className="text-muted text-center py-5">{emptyMessage}</td></tr>
+            <tr><td colSpan="5" className="text-muted text-center py-5 table-stack-empty">{emptyMessage}</td></tr>
           )}
           {transactions.map((tx) => (
             <tr key={tx.id}>
-              <td><span className="tx-badge">{tx.type.replace(/_/g, ' ')}</span></td>
-              <td className="font-monospace small">{tx.fromIban || '—'}</td>
-              <td className="font-monospace small">{tx.toIban || '—'}</td>
-              <td className="fw-semibold" style={{ color: '#34d399' }}>
+              <td data-label="Type"><span className="tx-badge">{tx.type.replace(/_/g, ' ')}</span></td>
+              <td data-label="From" className="font-monospace small">{tx.fromIban || '—'}</td>
+              <td data-label="To" className="font-monospace small">{tx.toIban || '—'}</td>
+              <td data-label="Amount" className="fw-semibold" style={{ color: '#34d399' }}>
                 {Number(tx.amount).toFixed(2)} {tx.currency}
               </td>
-              <td className="small text-muted">{new Date(tx.timestamp).toLocaleString()}</td>
+              <td data-label="When" className="small text-muted">{new Date(tx.timestamp).toLocaleString()}</td>
             </tr>
           ))}
         </tbody>

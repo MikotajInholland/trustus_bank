@@ -7,7 +7,7 @@ export default function TransactionFilters({ filters, onChange }) {
     <div className="glass-card glass-card-padded mb-3">
       <h2 className="h6 mb-3" style={{ color: 'var(--text-secondary)' }}>Filters</h2>
       <div className="row g-2">
-        <div className="col-md-3">
+        <div className="col-6 col-md-3">
           <label className="form-label">Start date</label>
           <input
             type="date"
@@ -16,7 +16,7 @@ export default function TransactionFilters({ filters, onChange }) {
             onChange={(e) => onChange({ ...filters, startDate: e.target.value })}
           />
         </div>
-        <div className="col-md-3">
+        <div className="col-6 col-md-3">
           <label className="form-label">End date</label>
           <input
             type="date"
@@ -25,7 +25,7 @@ export default function TransactionFilters({ filters, onChange }) {
             onChange={(e) => onChange({ ...filters, endDate: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-6 col-md-2">
           <label className="form-label">Min amount</label>
           <input
             type="number"
@@ -35,7 +35,7 @@ export default function TransactionFilters({ filters, onChange }) {
             onChange={(e) => onChange({ ...filters, minAmount: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-6 col-md-2">
           <label className="form-label">Max amount</label>
           <input
             type="number"
@@ -45,7 +45,7 @@ export default function TransactionFilters({ filters, onChange }) {
             onChange={(e) => onChange({ ...filters, maxAmount: e.target.value })}
           />
         </div>
-        <div className="col-md-2">
+        <div className="col-6 col-md-2">
           <label className="form-label">Exact amount</label>
           <input
             type="number"
@@ -55,7 +55,7 @@ export default function TransactionFilters({ filters, onChange }) {
             onChange={(e) => onChange({ ...filters, exactAmount: e.target.value })}
           />
         </div>
-        <div className="col-md-4">
+        <div className="col-12 col-md-4">
           <label className="form-label">IBAN</label>
           <input
             className="form-control form-control-sm font-monospace"
@@ -64,7 +64,7 @@ export default function TransactionFilters({ filters, onChange }) {
             onChange={(e) => onChange({ ...filters, iban: e.target.value })}
           />
         </div>
-        <div className="col-md-2 d-flex align-items-end">
+        <div className="col-12 col-md-2 d-flex align-items-end">
           <button
             className="btn btn-outline-secondary btn-sm w-100"
             onClick={() => onChange({

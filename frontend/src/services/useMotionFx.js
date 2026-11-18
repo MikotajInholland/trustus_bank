@@ -2,8 +2,11 @@
 // @author Wesley, Darlington, Mikotaj (shared)
 import { useEffect, useRef } from 'react'
 
+// Skip pointer-driven effects for reduced motion and on touch devices (taps emit
+// synthetic mouse events that would leave elements stuck mid-transform).
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    || !window.matchMedia('(hover: hover) and (pointer: fine)').matches
 }
 
 // Subtle 3D tilt toward the cursor (max ~7°).

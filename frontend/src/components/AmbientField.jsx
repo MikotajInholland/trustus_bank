@@ -44,8 +44,13 @@ export default function AmbientField() {
     }
 
     function resize() {
+      // Mobile browsers fire resize when the URL bar shows/hides (height only);
+      // rebuilding the canvas then causes visible flicker, so ignore those.
+      if (width && window.innerWidth === width && Math.abs(window.innerHeight - height) < 160) {
+        return
+      }
       width = window.innerWidth
-      height = window.innerHeight
+      height = Math.max(window.innerHeight, window.screen?.height || 0)
       canvas.width = width
       canvas.height = height
       const count = width < 768 ? 36 : Math.min(72, Math.floor((width * height) / 18000))
@@ -110,6 +115,11 @@ export default function AmbientField() {
       animationId = requestAnimationFrame(draw)
     }
 
+    function onVisibility() {
+      cancelAnimationFrame(animationId)
+      if (!document.hidden) animationId = requestAnimationFrame(draw)
+    }
+
     function onMove(event) {
       mouseRef.current = { x: event.clientX, y: event.clientY, active: true }
     }
@@ -121,12 +131,14 @@ export default function AmbientField() {
     resize()
     draw()
     window.addEventListener('resize', resize)
+    document.addEventListener('visibilitychange', onVisibility)
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseleave', onLeave)
 
     return () => {
       cancelAnimationFrame(animationId)
       window.removeEventListener('resize', resize)
+      document.removeEventListener('visibilitychange', onVisibility)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('mouseleave', onLeave)
     }
